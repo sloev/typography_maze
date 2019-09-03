@@ -10,6 +10,22 @@ python 3+
 brew reinstall cairo pkg-config
 
 pip install cairocffi afinn
+
+npm install svgexport -g
+
+```
+
+## usage
+
+```
+# get a text file with lots of text inside and run
+
+python main.py input.txt
+
+# now you have a huge output.svg
+# create a portable downscaled PNG with correct ratio and max 1000 in width
+
+svgexport output.svg output2.png 1000:
 ```
 
 ## here is Kafkas *The Trial* as a typographic maze:
