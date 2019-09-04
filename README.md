@@ -29,4 +29,10 @@ svgexport output.svg output2.png 1000:
 ```
 
 ## here is Kafkas *The Trial* as a typographic maze:
+
 ![kafkas The Trial](/the_trial.png?raw=true "Kafkas The Trial")
+
+And here is an excerpt showing that the lines actually are text:
+
+![kafkas The Trial](/the_trial_excerpt.svg?raw=true&sanitize=true "Kafkas The Trial excerpt")
+
