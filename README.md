@@ -1,5 +1,9 @@
 # make typographic art from books
 
+
+<a href="https://www.buymeacoffee.com/sloev" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-pink.png" alt="Buy Me A Coffee" height="51px" width="217px"></a>
+
+
 uses sentiment of words to make turns
 
 ## dependencies
