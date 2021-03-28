@@ -1,5 +1,6 @@
 import draw
 import sys
+import math
 from afinn import Afinn
 from tqdm import tqdm
 
@@ -32,9 +33,17 @@ with open(sys.argv[1]) as f:
     y -= y_range[0]
     y += fontsize * 5
 
-    print(f"running for real with x:{x}, y:{y}, width:{width}, height:{height}")
+    print(
+        f"running for real with x:{x}, y:{y}, width:{width}, height:{height}")
     f.seek(0)
     with draw.create_canvas_render(width, height, x, y, fontsize) as render:
+        polarity = 0
         for word in tqdm(f.read().split(" ")):
-            polarity = max(min(int(afinn.score(word)), 1), -1)
-            render(f" {word} ", polarity)
+            new_polarity = afinn.score(word)
+            new_polarity = max(min(int(new_polarity), 6), -6)/6.0
+            new_polarity_is_zero = "{:.1f}".format(new_polarity) == "0.0"
+            if new_polarity_is_zero:
+                polarity *= 0.9
+            else:
+                polarity = new_polarity
+            render(f" {word} ", polarity*math.pi)
