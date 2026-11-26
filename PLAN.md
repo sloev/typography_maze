@@ -91,7 +91,42 @@ These are detected automatically, ranked, and turned into anchors and zooms.
   corridors and spirals. Stripes from all books stack into a comparison chart
   of *when* in a book things happen.
 
-### 2.4 Comparative methods
+### 2.4 Crossings, overlaps and enclosed areas
+
+The path crosses itself constantly, and in places it piles up into very dense
+tangles. That tangle is the most important material in the drawing, so it
+gets its own methods.
+
+The walk is axis-aligned with whole-word lengths, so every crossing sits on
+**exact integer coordinates**. The whole planar structure can be computed
+exactly, with no tolerance issues.
+
+Prototype numbers (`prototypes/crossings.py`):
+
+| Work | Sentences | Crossings | Median gap between crossing sentences | Overlapping (collinear) length |
+|---|---|---|---|---|
+| The Trial | 3,835 | 1,179 | 38 sentences | 916 words |
+| Metamorphosis | 764 | 220 | 59 | 182 |
+| Yellow Wallpaper | 376 | 115 | 21 | 148 |
+
+| Method | Definition | Reading |
+|---|---|---|
+| **Crossing count / rate** | Proper crossings, total and per sentence | How tangled the book is |
+| **Crossing gap** | Distribution of \|i − j\| over crossing pairs, split into short gaps (local knots) and long gaps (the book cutting across its own past) | Short-term rumination versus long-range return |
+| **Junction order** | How many strokes meet at a lattice point (2 = crossing, 3+ = junction) | Points where several moments of the book meet |
+| **Palimpsest** | Collinear overlap: stretches where a later sentence runs exactly on top of an earlier one; length, count, and the sentence pairs | The book rewrites itself; both sentences quoted side by side |
+| **Crossing graph** | Sentences are nodes, crossings are edges; degree and betweenness | The **most-crossed sentence** is the book's hub (The Trial: #693, crossed 13 times, from the court hall scene). It's a natural label anchor and pull quote |
+| **Cellularity** | Faces of the planar arrangement: count, area distribution, smallest cells | How finely the book subdivides its space; the chambers from §2.2 are the large, sealed faces |
+| **Tangle field** | Crossing density per mm², drawn in 1-bit as stipple (dot density) | A heat map without grey |
+
+**Dense tangles.** Where crossings get too dense for the 2D drawing to resolve:
+
+- **Cascade zoom**: ×1 → ×4 → ×16 inset frames, each smaller than the last.
+- **Exploded view**: the tangle drawn as small multiples, one per narrative quarter.
+  You see the knot assembled over time.
+- **Ground view (§3b)**: walk into the tangle.
+
+### 2.5 Comparative methods
 
 - **Signature vector**: each book reduced to the global metrics, as z-scores
   against its own shuffle baseline.
@@ -137,6 +172,57 @@ These are detected automatically, ranked, and turned into anchors and zooms.
 
 ---
 
+## 3b. Ground view: standing inside the maze
+
+A second kind of image, used where the 2D drawing becomes too dense to read
+(the tangles from §2.4) and at the book's key anchors.
+
+**Model**
+- Every stroke is a **wall of infinite height** with zero thickness.
+- The **floor** carries the sentence that made the wall, written along the wall's
+  base on both faces, reading in the direction of travel.
+- Where sentences overlap (palimpsest), their lines of text stack outward
+  from the wall in sentence order, so the overwrite becomes visible.
+- Since the walls are infinitely tall there is no sky, and occlusion is
+  **purely 2D**. What's visible from a point is exactly the 2D visibility
+  polygon. That makes the rendering exact and cheap.
+
+**Rendering (vector, 1-bit)**
+- The floor maps to the image by a homography. Glyph outlines (from the font,
+  via fontTools) are transformed exactly, so the text stays vector and sharp
+  even close to the camera.
+- Glyphs whose features drop below the minimum printable size (0.1 pt) are
+  culled. The text fades out into the distance on its own, with no grey.
+- Walls are white planes. Their visible faces get vertical hatching whose
+  spacing encodes the wall's sentence (sentiment strength, or the wall's
+  direction), with black rules at wall ends and at the floor line. Vertical
+  edges stay vertical because the camera is level.
+- **Formats**: a single perspective view (one page); a 360° cylindrical panorama
+  across a spread (the infinite walls make the panorama seamless); and a
+  "walk" sequence of 4–6 frames along a corridor.
+
+**Where the camera goes** (automatic candidates, then picked by hand)
+- Inside the densest crossing hotspot, beside a long stroke, looking along it
+  so the sentence runs off towards the vanishing point.
+- Standing on the most-crossed sentence.
+- Inside the largest chamber.
+- At a return or palimpsest.
+
+The 2D page marks every viewpoint with a small eye symbol and view cone, using
+the same arrow rule (black, white over ink).
+
+**Methods defined from the ground** (added to the toolkit)
+- **Sightline count**: how many distinct sentences are visible from a point.
+- **Vista**: the longest unobstructed sightline.
+- **Enclosure**: the area of the visibility polygon. A small value means
+  claustrophobic, a large value means open.
+
+Prototype: `prototypes/view3d.py` (raster, for checking the idea; the final
+version is vector). Its first frame is from The Trial's densest tangle, looking
+along a wall with its sentence written on the floor.
+
+---
+
 ## 4. Corpus: themes × authors (public domain, English)
 
 | | Fear | Love | Alienation | Sea / journey | Crime / guilt |
@@ -168,6 +254,9 @@ Each work gets 200 shuffle baselines.
   3. *Themes* (one chapter each). Per work:
      - spread A: metrics and a short essay | the full labelled drawing
      - spread B: two or three zoom panels with sentence-level text and commentary
+     - spread C (where the drawing is too dense): crossing analysis (tangle field,
+       hub sentence, palimpsests) | a ground view from inside the tangle;
+       optionally a 360° panorama across a spread
      - the theme ends with a comparison spread (small multiples at common
        scale, event stripes, theme centroid)
   4. *Authors*: author signatures and cross-theme authors (Poe, Stevenson,
@@ -186,7 +275,11 @@ Each work gets 200 shuffle baselines.
 2. **Analysis core**: §2.1 metrics, shuffle baseline, knot/chamber/return detection.
 3. **Annotation**: anchors, label placement, inverted arrows, zoom panels with
    sentence text. Deliverable: The Trial spread A + spread B as a LaTeX PDF.
-4. **Test print** on the target printer and paper.
-5. **Corpus**: fetch and build all works; author and theme comparisons.
-6. **Writing**: region commentary and essays per work, chapter introductions.
-7. **Book**: full LaTeX build, proofing, final PDF.
+4. **Crossings and ground view**: exact arrangement (crossings, overlaps, enclosed
+   areas), crossing graph, vector ground-view renderer with viewpoint selection.
+   Deliverable: The Trial spread C.
+5. **Test print** on the target printer and paper, including the culling of small
+   glyphs in the ground view.
+6. **Corpus**: fetch and build all works; author and theme comparisons.
+7. **Writing**: region commentary and essays per work, chapter introductions.
+8. **Book**: full LaTeX build, proofing, final PDF.
