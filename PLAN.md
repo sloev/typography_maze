@@ -172,107 +172,53 @@ Prototype numbers (`prototypes/crossings.py`):
 
 ---
 
-## 3b. Ground view: walking the pathways
+## 3b. Ground view: standing letters
 
-A second kind of image, used where the 2D drawing becomes too dense to read
-(the tangles from §2.4) and at the book's key anchors.
+A second kind of image, used at the busiest junctions and at the book's key
+anchors. It replaces the earlier walled-pathway version (kept for reference in
+`prototypes/view3d.py` and `render.py`).
 
-![ground view prototype](prototypes/ground_view_trial.png)
+![standing letters](prototypes/standing_letters.png)
 
 **Model**
-- **The text is the pathway.** Every sentence stroke is a corridor. The sentence
-  is written along it **as seen from above**: the baseline runs along the
-  right-hand wall, the tops of the letters point to the left-hand wall, and it
-  reads in the walking direction. Each sentence is justified to its stroke length
-  (1 unit = 1 word), so the lettering fills the corridor width.
-- **Walls line both sides of every pathway, and their height comes from the
-  text.** Each word raises the wall segment beside it to
-  `h = 0.35 + 0.14 × letters + 0.55 × |sentiment|` (in word units; the pathway
-  is 0.52 wide, eye height 0.30). Every sentence therefore has its own
-  skyline: long words stand tall, and emotionally charged words stand up as
-  towers above their neighbours. Walls are 0.30 thick. Where two sentences'
-  walls meet, the taller one wins.
-- Where pathways cross, the corridors merge (the walkable space is the union of
-  all corridors). A crossing appears as a side opening, with the other sentence
-  running across your floor.
-- Where sentences overlap on the same line (palimpsest), their letters overprint.
-- **The camera is always inside a pathway**, at eye height, looking along it in
-  the reading direction.
+- **No walls, no floor text. The sentences themselves stand on the ground.**
+  Each sentence is set in large type (EB Garamond semibold, em = 1.5 units) and
+  stands upright along its stroke: baseline on the ground, reading in the
+  walking direction. Seen from the right-hand side of the walking direction it
+  reads normally; from the other side it reads mirrored.
+- **Letters are pure black and have no thickness**: flat cut-outs in the
+  vertical plane of their stroke.
+- **Stroke length = the sentence's natural set width**, so letters keep their true
+  proportions. The 3D scene uses this character-width walk; the turns are the
+  same as in the 2D drawing.
+- **Where sentences cross, their letters pass through each other** and pile up
+  into dense black knots: the crossings of §2.4 made physical.
 
-**Light: the sun through haze**
-- A sun with an azimuth and elevation. **Shadows are exact.** From every floor
-  and wall point the renderer traces towards the sun through the floor plan, so
-  walls throw sharp shadows onto the floor and onto each other. Typically one
-  wall is lit, the other in shade, and a lit band runs along the floor, cut by a
-  clean diagonal shadow line. Side openings let in light.
-- With finite, word-height walls the sky shows above them, and sunlight falls
-  over the low words and into the pathway. Shadows step with the skyline of
-  the sentence that casts them.
-- **It stays light inside the maze**: strong skylight fills the shade, so
-  shadowed floor is a light grey and the black lettering stays readable
-  everywhere. Wall faces get slightly different skylight by orientation, so
-  their form holds in the shade. Direct sun adds bright bands and patches on
-  top of that.
-- **Haze**: distance fades towards a bright haze tone, and the sunlit air
-  scatters light towards the eye (forward scattering), so light shafts glow
-  at the end of a pathway and in openings.
-- **1-bit**: the image is computed in continuous tone and then
-  error-diffused (Floyd–Steinberg, serpentine) to pure black and white. The
-  dither grain is part of the look and reads as haze.
-- **Font**: EB Garamond (SIL Open Font License), semibold.
+**Light**
+- The ground is lit by skylight plus the sun. The letters throw shadows across
+  the ground as legible letter shapes.
+- Haze fades distant sentences towards a light grey, which gives depth in pure
+  black and white.
+- 1-bit by error diffusion. Black letters stay solid; the dots are only in the
+  ground, shadows, haze and sky.
 
-**Viewpoints** (`prototypes/render.py`, per-pixel 3D ray casting through the
-word-height field, so any position, direction and tilt works). All are aimed at
-the same top-ranked junction, so a book can show one place from several angles:
+**Where the camera goes**
+- The busiest place: the point with the most distinct sentences within a
+  radius of 8 units. Candidates are spaced at least 40 units apart, one view
+  per junction.
 
 | Mode | Camera | What it shows |
 |---|---|---|
-| `walk` | eye height 0.30 in the pathway, level | Reading the sentence ahead, openings at crossings |
-| `corner` | in the junction, turned down the crossing pathway, tilted 14° down | The crossing sentence, with the original running off to the side |
-| `worm` | eye almost on the floor, tilted 14° up | The words as towers; the skyline of a sentence against the sky |
-| `wall` | standing on the left-hand wall 2.5 words back, tilted 40° down | Looking down into the pathway and across neighbouring walls |
-| `oblique` | 6.5 units back and up, tilted 40° down, turned 30° | The junction as a small city of words |
-| `aerial` | 11 units out, tilted 62° down | The knot: several crossing pathways and their walls |
-| `plan` | 8 units up, straight down | Almost the 2D map, but with height, shadow, and the crossing sentences legible |
+| `stand` | eye height 0.62 on the readable side, 7 units back, looking along the sentence into the junction | The sentence reading away from you, crossing sentences cutting through it |
+| `among` | in the junction, among the letters | Letters towering at the frame edge; the knot up close |
+| `high` | 9 units up, behind, looking down at the junction | The crossing sentences as lines of standing type: the 2D drawing, legible |
+| `low` | eye on the ground, looking slightly up | Letters as monuments against the sky |
 
-`walk`, `wall` and `plan` are the strongest. `plan` connects directly to the 2D
-drawing: it is the same junction as the zoom panel, with depth. `oblique` and
-`aerial` show the structure but the floor text is small, so they suit
-spreads more than single pages.
-
-Further formats: a 4–6 frame walk along a sentence (the sun fixed per book), a
-360° panorama at a junction across a spread, and a "descent" sequence from
-`plan` → `aerial` → `wall` → `walk`, which zooms from the map into the pathway.
-
-**Where the camera goes: always where the pathways cross most**
-- All crossings are computed exactly: every horizontal stroke against every
-  vertical stroke, corridor width included. Each crossing is recorded as a
-  position along both sentences.
-- Every word position of every sentence is a candidate viewpoint, facing the
-  reading direction. Its score is the number of crossings within the next 10
-  words. The camera never stands inside a crossing wall.
-- The top-ranked positions are used, one per sentence. These are usually
-  junctions: a crossing sentence runs across the floor at your feet, and
-  openings line up ahead. The highest-scoring views typically have 4–5
-  crossings ahead.
-- The 2D page marks every viewpoint with a small eye symbol and view cone,
-  using the arrow rule (black, white over ink).
-
-**Methods defined from the ground** (added to the toolkit)
-- **Sightline count**: how many distinct sentences are visible from the
-  viewpoint.
-- **Vista**: how far you can see along the pathway before a wall.
-- **Openings**: side openings per 10 words, which shows how porous a passage is.
-
-**Renderer**: the prototype `prototypes/view3d.py` builds a height field
-(walls from word heights, pathways carved out) and renders it with exact
-grid traversal, front to back with a y-buffer: vertical faces, wall tops and
-floor. It samples a high-resolution lettering texture for the floor, traces
-exact shadows through the height field towards the sun, and integrates the
-sunlit haze along each view ray. All of it is accelerated with numba, at about
-20 s per frame. For print it renders at ≥ 1200 dpi before dithering. The lettering
-texture near the camera needs more resolution (or the glyphs rendered as
-outlines through the floor homography) so close letters stay sharp.
+**Renderer**: `prototypes/letters3d.py` ray-casts per pixel against each
+sentence's vertical plane (one plane test plus a lookup in the glyph-mask atlas
+per sentence), with a shadow ray per ground pixel, numba-accelerated. The final
+version should use glyph outlines instead of the bitmap mask, so close-up letter
+edges stay smooth.
 
 ---
 

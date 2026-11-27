@@ -22,3 +22,10 @@ Also needed for `view3d.py`: `fonts/EBGaramond.ttf` (Google Fonts, SIL Open Font
 `walk corner worm wall oblique aerial plan`. It uses `scene.py` (walk, crossings, word-height field, lettering)
 and renders any camera position and tilt by per-pixel ray casting → `viewpoints_trial.png`
 (top to bottom: wall, oblique / aerial, plan / worm, corner).
+
+### Standing letters (current 3D concept)
+
+`letters3d.py texts/7849.txt out.png [n] [sun_az] [sun_el] [mode]`, where mode is one of `stand among high low`.
+Sentences stand on the ground as black letters with no thickness, along their strokes; there are no walls.
+n picks the n-th busiest junction → `standing_letters.png`
+(rows: stand / among, high / low, Metamorphosis / Yellow Wallpaper).
