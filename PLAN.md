@@ -199,8 +199,18 @@ anchors. It replaces the earlier walled-pathway version (kept for reference in
   the ground as legible letter shapes.
 - Haze fades distant sentences towards a light grey, which gives depth in pure
   black and white.
-- 1-bit by error diffusion. Black letters stay solid; the dots are only in the
-  ground, shadows, haze and sky.
+- **1-bit: the same screen as the sister project (grudgebook).** Every ground
+  view is rendered in greyscale, then screened by `tools/halftone.py` /
+  `tools/halftone.c` at its exact placed size (A5 text width, 1200 dpi), so
+  the press never re-screens it. The pipeline is: levels → resample to the
+  device grid → unsharp mask → gentle S-curve → inverse dot gain (12 %) →
+  clean white / solid black → **stochastic clustered dots** (random dot
+  centres with a minimum spacing, about 220 dots per inch, no grid or lattice).
+  The randomised error diffusion (`--screen fm`) is available as an
+  alternative.
+- Letters stay solid black for the first 25 units, so they print as pure ink
+  rather than dots. Only distant letters fade into the haze. The dots are in
+  the ground, the letter shadows, the haze and the sky.
 
 **Where the camera goes**
 - The busiest place: the point with the most distinct sentences within a

@@ -27,5 +27,7 @@ and renders any camera position and tilt by per-pixel ray casting → `viewpoint
 
 `letters3d.py texts/7849.txt out.png [n] [sun_az] [sun_el] [mode]`, where mode is one of `stand among high low`.
 Sentences stand on the ground as black letters with no thickness, along their strokes; there are no walls.
-n picks the n-th busiest junction → `standing_letters.png`
+Output is screened to 1-bit with `tools/halftone.py` (the grudgebook method: stochastic clustered dots, 1200 dpi, A5 text width).
+Set `SCREEN=fm` for randomised error diffusion instead.
+n picks the n-th busiest junction → `standing_letters.png`, plus `standing_letters_1200dpi_detail.png` (a 1:1 crop of the 1200 dpi bitmap)
 (rows: stand / among, high / low, Metamorphosis / Yellow Wallpaper).

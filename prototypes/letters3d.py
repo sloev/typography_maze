@@ -2,7 +2,7 @@
 # big upright 3D letters (glyphs extruded to a slab), baseline on the ground, reading in the walking
 # direction when seen from the right-hand side. Crossing sentences pass through each other.
 # Stroke length = the sentence's natural set width, so letters keep their true proportions.
-import re,sys,math,numpy as np
+import re,sys,os,math,numpy as np
 from PIL import Image,ImageDraw,ImageFont
 from numba import njit
 lex={}
@@ -52,7 +52,7 @@ atlas=np.zeros((HP,W_),np.uint8)
 for s,o in zip(near,offs):
     im=Image.new('L',(int(s['L']*PPU)+4,HP),0); ImageDraw.Draw(im).text((0,0),s['text'],font=font,fill=255)
     atlas[:,o:o+im.width]=np.asarray(im)
-ATL=(atlas>127)
+ATL=atlas            # antialiased glyph coverage, sampled bilinearly (contour at 50 %)
 # per stroke: origin, direction, left normal, length, atlas offset
 B=np.array([[s['x0'],s['y0'],D[s['d']][0],D[s['d']][1],s['L'],o] for s,o in zip(near,offs)],np.float64)
 print(len(near),"sentences in scene, atlas",ATL.shape)
@@ -74,9 +74,13 @@ def hit_scene(ox,oy,oz,dx,dy,dz,B,ATL,PPU,ASC,THK,tmax,HP,anyhit):
         if t<=1e-6 or t>=best: continue
         s_=(ox-x0)*ux+(oy-y0)*uy+(dx*ux+dy*uy)*t; z_=oz+dz*t
         if s_<0 or s_>=L or z_<0 or z_>ASC: continue
-        ix=int(s_*PPU); iz=int((ASC-z_)*PPU)
-        if iz<0 or iz>=HP: continue
-        if ATL[iz,off+ix]:
+        fx=s_*PPU-0.5; fz=(ASC-z_)*PPU-0.5
+        ix=int(math.floor(fx)); iz=int(math.floor(fz)); ax=fx-ix; az_=fz-iz
+        Lp=int(L*PPU)
+        if iz<0 or iz+1>=HP or ix<0 or ix+1>=Lp: continue
+        cov=(ATL[iz,off+ix]*(1-ax)*(1-az_)+ATL[iz,off+ix+1]*ax*(1-az_)
+             +ATL[iz+1,off+ix]*(1-ax)*az_+ATL[iz+1,off+ix+1]*ax*az_)
+        if cov>=127.5:
             if anyhit: return t,2,0.0,0.0,0.0
             best=t; kind=2
     return best,kind,0.0,0.0,1.0
@@ -113,7 +117,7 @@ elif MODE=='low':     # eye on the ground, letters towering
     cx,cy=jx-bx_*4-lx_*1.4,jy-by_*4-ly_*1.4; cz=0.12; tx,ty,tz=jx+bx_*4,jy+by_*4,1.1; fv=80
 fwd=np.array([tx-cx,ty-cy,tz-cz]); fwd/=np.linalg.norm(fwd)
 right=np.cross(fwd,[0,0,1.0]); right/=np.linalg.norm(right); up=np.cross(right,fwd)
-W,H=2400,1600; f=(W/2)/math.tan(math.radians(fv)/2)
+W,H=3000,2000; f=(W/2)/math.tan(math.radians(fv)/2)
 az=math.atan2(fwd[1],fwd[0])+math.radians(SUN_AZ); el=math.radians(SUN_EL)
 sun=np.array([math.cos(az)*math.cos(el),math.sin(az)*math.cos(el),math.sin(el)])
 OUT,DEP,LIT,NDS=[np.zeros((H,W),np.float64) for _ in range(4)]; KND=np.zeros((H,W),np.int8)
@@ -123,21 +127,14 @@ HAZE=55.0
 AMB=0.55
 col=np.where(KND==1,0.98*(AMB+0.62*LIT),0.0)
 col=np.where(KND==0,0.92+0.08*np.clip(NDS,0,1)**8,col)
-Tr=np.exp(-np.where(KND==0,1e9,DEP)/HAZE); col=col*Tr+0.96*(1-Tr)
+DH=np.where(KND==2,np.maximum(DEP-25.0,0.0),DEP)   # letters stay solid black for the first 25 units, then fade
+Tr=np.exp(-np.where(KND==0,1e9,DH)/HAZE); col=col*Tr+0.96*(1-Tr)
 img=np.clip(col,0,1)
-@njit(cache=True)
-def fs(a):
-    h,w=a.shape;o=np.zeros((h,w),np.uint8)
-    for y in range(h):
-        sd=1 if y%2==0 else -1
-        for i in range(w):
-            x=i if sd==1 else w-1-i
-            old=a[y,x];new=1.0 if old>=0.5 else 0.0;o[y,x]=255 if new>0 else 0;e=old-new
-            if 0<=x+sd<w: a[y,x+sd]+=e*7/16
-            if y+1<h:
-                if 0<=x-sd<w: a[y+1,x-sd]+=e*3/16
-                a[y+1,x]+=e*5/16
-                if 0<=x+sd<w: a[y+1,x+sd]+=e*1/16
-    return o
-Image.fromarray(fs(img.copy())).convert('1').save(out)
-Image.fromarray((img*255).astype(np.uint8)).save(out.replace('.png','_tone.png'))
+# --- 1-bit: the same screening as the sister project (stochastic clustered dots, 1200 dpi, placed size)
+sys.path.insert(0,'os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","tools")')
+import halftone
+tone=out.replace('.png','_tone.png')
+Image.fromarray((np.clip(img,0,1)*255).astype(np.uint8)).save(tone)
+SCREEN=os.environ.get('SCREEN','dots')
+h_,w_=halftone.screen_file(tone,out,width_in=halftone.A5_TEXT_WIDTH_IN,kind=SCREEN)
+print("1-bit",w_,"x",h_,"at 1200 dpi,",SCREEN)
