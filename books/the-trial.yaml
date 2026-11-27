@@ -1,0 +1,14 @@
+slug: the-trial
+gutenberg: 7849
+title: The Trial
+author: Franz Kafka
+translator: David Wyllie
+dead_zone: 0        # |AFINN| > 0 turns
+shuffles: 200
+seed: 7
+knot_cell: 24       # word units
+zoom_radius: 45     # word units
+label_band_mm: 30
+shaft_delta: 0.75   # degrees of tilt per turn
+shaft_azimuth: 35
+shaft_elevation: 24

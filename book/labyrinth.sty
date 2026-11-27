@@ -1,0 +1,57 @@
+% Labyrinthography — page design for the A5, 1-bit book.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{labyrinth}
+% ---- page: A5, text block 120 x 177 mm (labyrinth/build.py TEXT_W, TEXT_H)
+\setstocksize{210mm}{148mm}
+\settrimmedsize{\stockheight}{\stockwidth}{*}
+\setlrmarginsandblock{16mm}{12mm}{*}
+\setulmarginsandblock{15mm}{18mm}{*}
+\setheadfoot{6mm}{8mm}
+\setheaderspaces{*}{4mm}{*}
+\checkandfixthelayout
+% ---- type
+\RequirePackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{EBGaramond}[Path=../cache/fonts/, Extension=.otf, UprightFont=*-Regular,
+  ItalicFont=*-Italic, BoldFont=*-SemiBold, BoldItalicFont=*-SemiBoldItalic, Numbers=OldStyle]
+\newfontfamily\figfont{EBGaramond}[Path=../cache/fonts/, Extension=.otf, UprightFont=*-Regular,
+  ItalicFont=*-Italic, BoldFont=*-SemiBold, Numbers={Lining,Monospaced}]
+\RequirePackage{microtype}
+\RequirePackage{amsmath}
+\RequirePackage{booktabs}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\usetikzlibrary{patterns,calc}
+\RequirePackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\RequirePackage[hidelinks]{hyperref}
+% ---- 1-bit: everything is black on white
+\pgfplotsset{every axis/.append style={font=\figfont\scriptsize, axis line style={line width=0.4pt},
+  tick style={line width=0.4pt, black}, tick align=outside, axis x line*=bottom, axis y line*=left}}
+% ---- numbers from the build: \lab{key}
+\newcommand\lab[1]{\csname lab@#1\endcsname}
+\newcommand\z[1]{$z=\lab{z-#1}$}
+\newcommand\vs[1]{\lab{m-#1} (shuffled \lab{b-#1}\,$\pm$\,\lab{sd-#1}; $z=\lab{z-#1}$)}
+% ---- labels in the maze figure
+\newcommand\lblhead[1]{\textsc{\MakeLowercase{#1}}\\}
+\tikzset{mazelabel/.style={inner sep=0pt, font=\figfont\fontsize{6.6}{7.6}\selectfont},
+         shaftlabel/.style={inner sep=0.5pt, fill=white, anchor=west, font=\figfont\fontsize{6.6}{7.6}\selectfont}}
+\newcommand\labelledfigure[2]{% #1 pdf, #2 label file (positions in mm from the top-left)
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \node[anchor=north west, inner sep=0pt] at (0,0) {\includegraphics{#1}};
+    \input{#2}
+  \end{tikzpicture}}
+% ---- headings and captions
+\chapterstyle{bianchi}
+\renewcommand\chaptitlefont{\normalfont\LARGE\scshape\centering}
+\setsecheadstyle{\normalfont\large\scshape}
+\setsubsecheadstyle{\normalfont\itshape}
+\captionnamefont{\small\scshape}
+\captiontitlefont{\small}
+\setlength\parindent{1.2em}
+\makeevenhead{headings}{\thepage}{}{\small\scshape\leftmark}
+\makeoddhead{headings}{\small\scshape\rightmark}{}{\thepage}
+\pagestyle{headings}
+\newenvironment{finding}[1]{\par\medskip\noindent\textsc{#1.}\enspace\ignorespaces}{\par}
+\newcommand\sref[1]{\S\,#1}
+\endinput

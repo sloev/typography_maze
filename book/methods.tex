@@ -1,0 +1,137 @@
+\chapter{Method}
+\label{ch:method}
+
+\section{The walk}
+
+A book is read one sentence at a time and drawn as a path on a square grid. Each
+sentence becomes one straight stroke whose length is the sentence's number of
+words. Before a stroke is drawn, the path turns:
+
+\begin{itemize}
+\item ninety degrees to the \emph{left} if the sentence is positive,
+\item ninety degrees to the \emph{right} if it is negative,
+\item not at all if it is neutral.
+\end{itemize}
+
+\noindent The first stroke points east, and the turn of sentence $i$ is
+\[
+\tau_i=\operatorname{sign}\Bigl(\sum_{w\in s_i}a(w)\Bigr)\in\{-1,0,+1\},
+\]
+where $a(w)$ is the valence of word $w$ in the AFINN-165 lexicon (integers from
+$-5$ to $+5$; words not in the lexicon count as $0$). Because every stroke has a
+whole-number length and runs along a grid axis, every vertex, crossing and
+overlap of the drawing has exact integer coordinates. Nothing is rounded.
+
+\paragraph{Sentences.} Text is taken from Project Gutenberg with the licence
+header and footer removed. Chapter headings and chapter subtitles are recorded
+but not drawn. A paragraph break always ends a sentence. Inside a paragraph, a
+sentence ends at \texttt{.\,!\,?} when the next word begins with a capital,
+a digit or an opening quotation mark, except after honorifics (Mr., Mrs., Dr.,
+\ldots) and single-letter initials, so ``Josef~K.'' does not end a sentence.
+Sentences are numbered \sref{1}, \sref{2}, \ldots\ in reading order; every
+reference to a sentence in this book uses that number.
+
+\section{The test against chance}
+
+A drawing is the product of two things: what a book is made of (how long its
+sentences are and how they feel) and the order they come in. The first is not
+specific to the drawing; anyone could count it. The method is only interesting
+where the \emph{order} leaves a mark.
+
+Every order-dependent measure is therefore compared with a \emph{shuffle
+baseline}: the same sentences, with the same lengths and the same turns, drawn
+again in random order, \lab{shuffles} times. The baseline keeps the book's
+material and destroys its sequence. For a measure $M$ with baseline mean $\mu$
+and standard deviation $\sigma$,
+\[
+z=\frac{M_{\text{book}}-\mu}{\sigma},
+\]
+and $p$ is the share of shuffles at least as far from $\mu$ as the book is
+(two-sided, with the book itself counted once). Twelve measures are tested on
+every book, so a result is called \emph{significant} only when $|z|\ge3$, a
+threshold that keeps the chance of any false alarm in a book's twelve tests
+below about 3\,\%. Smaller deviations are reported, but not interpreted.
+
+\section{Measures of the whole drawing}
+
+\begin{description}
+\item[Stride] mean sentence length in words, and its coefficient of variation
+(standard deviation over mean). Order-free.
+\item[Turn shares] the fractions of left, right and straight sentences.
+Order-free.
+\item[Handedness] the net rotation, $\sum_i\tau_i/4$, in full turns. Negative
+means the book turned right (negative) more often than left. Order-free.
+\item[Turn entropy] $H_1$ is the Shannon entropy of the turn sequence (in bits;
+at most $\log_2 3\approx1.585$). $H_2$ is the entropy of a turn given the
+turn before it. $H_2<H_1$ means a sentence's feeling is partly predictable
+from the sentence before. Order-dependent.
+\item[Recoil] of all pairs of consecutive sentences that both turn, the share
+that turn the \emph{same} way: two lefts or two rights, which together reverse
+the path. Recoil measures how much a feeling persists. \emph{Vacillation}
+is the complementary share of opposite pairs, which make the path zig-zag.
+\item[Corridors] a corridor is a run of consecutive neutral sentences, which
+draws a straight line. We report the longest and the mean run.
+\item[Drift] the straight-line distance from the first to the last point,
+divided by the total length of the path. Near 0, the book ends near where it
+began; near 1, it travelled.
+\item[Gyration] the radius of gyration of the drawing (the root-mean-square
+distance of the path from its centre of mass), divided by the square root of
+the path length, so books of different length can be compared. Its growth
+over narrative time is the \emph{gyration curve}.
+\item[Sprawl] occupied grid cells divided by the area of the convex hull. Low
+sprawl is a sparse, far-reaching drawing; high sprawl is compact.
+\item[Texture] the box-counting dimension of the drawing between 2 and 64 word
+units: 1 for a line, approaching 2 for a drawing that fills the plane.
+\item[Crossings] proper crossings between strokes that are not neighbours in
+the text, per sentence. The \emph{crossing gap} of a crossing is the distance in
+the book, in sentences, between the two sentences that cross; we report its
+median.
+\item[Palimpsest] the total length, in words, of strokes that lie exactly on
+top of an earlier stroke.
+\end{description}
+
+\section{Local structures}
+
+These are found automatically and are the places the labels in each drawing
+point to.
+
+\begin{description}
+\item[Knot] the drawing is divided into cells of 24\,$\times$\,24 word units,
+and crossings are counted per cell, smoothed over each cell's neighbours. A
+knot is a local maximum. For a knot we report its crossings, the sentences
+that form it, which chapters they come from, and its \emph{time span}: how far
+apart in the book its sentences are.
+\item[Hub] the sentence crossed by the most other sentences.
+\item[Return] the crossing whose two sentences are farthest apart in the book:
+the place where the end of the book walks over its beginning.
+\item[Coil] the twelve consecutive sentences with the largest net rotation: a
+spiral.
+\item[Darkest passage] the thirty consecutive sentences with the lowest summed
+AFINN score.
+\item[Longest corridor] the run of neutral sentences with the most words.
+\item[Palimpsest] the longest stretch where a later sentence is drawn exactly
+on top of an earlier one.
+\end{description}
+
+\section{The mineshaft}
+
+The same walk is also built in three dimensions. The horizontal turns are as
+before, but every left turn also tilts the path \lab{shaft-delta}\textdegree{}
+upwards and every right turn tilts it the same amount down. The elevation
+angle of stroke $i$ is therefore $\delta\sum_{j\le i}\tau_j$ (clamped to
+$\pm80$\textdegree). A book that turns right more than left descends, and
+where it lingers in one mood it tunnels steeply. The shaft is drawn in
+perspective from an angled side view, far strokes first, each with a white
+casing so that nearer passages visibly pass in front of farther ones. Depth is
+compressed by the stated vertical scale, as in a geological section.
+
+\section{What this method cannot see}
+
+The turns come from a word list applied to single sentences. AFINN was built
+for English social-media text. It does not read irony, negation (``not
+happy'' scores as \emph{happy}) or context. For translated books it reads the
+\emph{translation}, and a translator's word choices change the drawing. These
+limits apply equally to the book and to its shuffles, so they cannot by
+themselves produce a significant $z$. They do limit what a significant $z$
+means: it is a statement about the order of the scored sentences, not about
+the author's intentions.
