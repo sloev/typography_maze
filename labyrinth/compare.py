@@ -72,19 +72,44 @@ def main(paths):
         # the other instruments
         r = instruments.tree_rings(book, os.path.join(out, f"rings-{slug}.pdf"), size=36)
         N[f"{k}-rings"] = str(r["rings"]); N[f"{k}-wordlen"] = fmt(r["mean_word_length"], 2)
-        lm = instruments.loom(book, os.path.join(out, f"loom-{slug}.pdf"), wmm=22, hmm=110, rows=110, top=10)
+        lm = instruments.loom(book, os.path.join(out, f"loom-{slug}.pdf"), wmm=22, hmm=96, rows=96, top=10)
         N[f"{k}-cast"] = ", ".join(tex_escape(x) for x in lm["names"])
         if lm["closest"]:
             N[f"{k}-pair"] = " and ".join(tex_escape(x) for x in lm["closest"])
             N[f"{k}-pair-share"] = fmt(100 * lm["closest_share"], 0)
         top = max(lm["presence"], key=lm["presence"].get)
         N[f"{k}-lead"] = tex_escape(top); N[f"{k}-lead-share"] = fmt(100 * lm["presence"][top], 0)
-        ec = instruments.echoes(book, os.path.join(out, f"echo-{slug}.pdf"), wmm=120, hmm=26)
+        ec = instruments.echoes(book, os.path.join(out, f"echo-{slug}.pdf"), wmm=120, hmm=19)
         N[f"{k}-echo-words"] = fmt(ec["words"]); N[f"{k}-echo-far"] = fmt(100 * ec["far_share"], 1)
         N[f"{k}-echo-longest"] = ", ".join(f"\\emph{{{x}}}" for x in ec["longest"][:3])
-        td = instruments.tide(book, os.path.join(out, f"tide-{slug}.pdf"), wmm=120, row_h=7, rows=3, gap=2)
+        td = instruments.tide(book, os.path.join(out, f"tide-{slug}.pdf"), wmm=120, row_h=5.5, rows=3, gap=1.5)
         N[f"{k}-speech"] = fmt(100 * td["speech_share"], 0); N[f"{k}-silence"] = fmt(td["longest_silence"])
-        json.dump(dict(vocab=info, loom=lm, echoes=ec, tide=td, rings=r),
+        # five more instruments
+        br = instruments.breath(book, os.path.join(out, f"breath-{slug}.pdf"), wmm=120, row_h=6, rows=2, gap=1.5)
+        N[f"{k}-clause"] = fmt(br["mean"], 1); N[f"{k}-longbreath"] = fmt(100 * br["long_share"], 1)
+        N[f"{k}-longest-clause"] = str(br["longest"])
+        sk = instruments.sky(book, os.path.join(out, f"sky-{slug}.pdf"), wmm=120, cell=1.05)
+        N[f"{k}-questions"] = fmt(100 * sk["questions"], 1); N[f"{k}-exclaim"] = fmt(100 * sk["exclamations"], 1)
+        N[f"{k}-qrun"] = str(sk["q_run"]); N[f"{k}-qrun-ref"] = f"\\S\\,{sk['q_run_start'] + 1}"
+        N[f"{k}-qrun-ch"] = str(book.sentences[sk["q_run_start"]].chapter + 1)
+        pw = instruments.pronoun_walk(book, os.path.join(out, f"pronouns-{slug}.pdf"))
+        for g, v_ in pw["shares"].items():
+            N[f"{k}-pr-{g}"] = fmt(100 * v_, 0)
+        N[f"{k}-bearing"] = fmt(pw["bearing"], 0)
+        dirs = ["north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"]
+        N[f"{k}-heading"] = dirs[int(((pw["bearing"] + 22.5) % 360) // 45)]
+        top_p = max(pw["shares"], key=pw["shares"].get)
+        N[f"{k}-top-pronoun"] = f"\\emph{{{top_p}}}"
+        cl = instruments.clock(book, os.path.join(out, f"clock-{slug}.pdf"), size=36)
+        N[f"{k}-times"] = fmt(cl["mentions"]); N[f"{k}-night"] = fmt(100 * cl["night"], 0)
+        hh = cl["mean_hour"]; N[f"{k}-hour"] = f"{int(hh):d}:{int(round((hh % 1) * 60)) % 60:02d}"
+        N[f"{k}-time-top"] = ", ".join(f"\\emph{{{w}}}" for w, _ in cl["top"])
+        lmtr = instruments.light_meter(book, os.path.join(out, f"light-{slug}.png"), wmm=120, hmm=6)
+        N[f"{k}-light"] = fmt(lmtr["light"]); N[f"{k}-dark"] = fmt(lmtr["dark"])
+        N[f"{k}-light-balance"] = fmt(100 * lmtr["balance"], 0)
+        N[f"{k}-darkest-at"] = fmt(100 * lmtr["darkest_at"], 0); N[f"{k}-lightest-at"] = fmt(100 * lmtr["lightest_at"], 0)
+        json.dump(dict(vocab=info, loom=lm, echoes=ec, tide=td, rings=r, breath=br, sky=sk, pronouns=pw,
+                       clock=cl, light=lmtr),
                   open(os.path.join(out, f"{slug}.json"), "w"), indent=1, default=str)
         print(slug, info["types_in_dict"], "words in the dictionary,", f"median rank {info['median_rank']:.3f}",
               "| cast", lm["names"][:5], "| speech", round(td["speech_share"], 2), "| far echoes", round(ec["far_share"], 3))

@@ -64,6 +64,7 @@ make            # = python3 -m labyrinth.build + labyrinth.experiments for each 
 | `labyrinth/experiments.py` | Every rule from every view (plan, mineshaft, letters at eye level and from above) → `build/<slug>/variants/` |
 | `labyrinth/vocab.py` | The vocabulary record: the dictionary (system word list, ranked by `wordfreq` commonness) as a spiral disc, common words at the centre; a book's words are black pixels |
 | `labyrinth/instruments.py` | Tree rings (chapters as rings, word length as grain), the loom (the cast as woven cloth), echoes (each word's longest absence as an arch), the tide (speech inside quotation marks) |
+| `labyrinth/instruments.py` (more) | Breath (clause lengths), the punctuation sky (how sentences end), the pronoun walk (I north, you south, he east, she west), the clock (times of day on a 24-hour dial), the light meter (light against dark words, screened to 1-bit) |
 | `labyrinth/compare.py` | All books side by side: drawings, records, rings, looms, echoes, tides and the numbers → `build/compare/` |
 | `book/` | `main.tex`, `methods.tex` (definitions and the test), `trial.tex` (The Trial), `labyrinth.sty` (A5 page design) |
 
