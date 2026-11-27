@@ -208,6 +208,11 @@ A second kind of image, used where the 2D drawing becomes too dense to read
 - With finite, word-height walls the sky shows above them, and sunlight falls
   over the low words and into the pathway. Shadows step with the skyline of
   the sentence that casts them.
+- **It stays light inside the maze**: strong skylight fills the shade, so
+  shadowed floor is a light grey and the black lettering stays readable
+  everywhere. Wall faces get slightly different skylight by orientation, so
+  their form holds in the shade. Direct sun adds bright bands and patches on
+  top of that.
 - **Haze**: distance fades towards a bright haze tone, and the sunlit air
   scatters light towards the eye (forward scattering), so light shafts glow
   at the end of a pathway and in openings.
@@ -220,12 +225,17 @@ A second kind of image, used where the 2D drawing becomes too dense to read
 sun fixed per book, so the light is consistent between frames), and a 360°
 panorama at a junction across a spread.
 
-**Where the camera goes** (automatic candidates, then picked by hand)
-- A few words before a sentence ends, so the turn ahead is visible (the
-  sentiment turn seen from the ground). Ranked by how many pathways cross the
-  stretch ahead.
-- On the most-crossed sentence.
-- Inside a junction or a palimpsest.
+**Where the camera goes: always where the pathways cross most**
+- All crossings are computed exactly: every horizontal stroke against every
+  vertical stroke, corridor width included. Each crossing is recorded as a
+  position along both sentences.
+- Every word position of every sentence is a candidate viewpoint, facing the
+  reading direction. Its score is the number of crossings within the next 10
+  words. The camera never stands inside a crossing wall.
+- The top-ranked positions are used, one per sentence. These are usually
+  junctions: a crossing sentence runs across the floor at your feet, and
+  openings line up ahead. The highest-scoring views typically have 4–5
+  crossings ahead.
 - The 2D page marks every viewpoint with a small eye symbol and view cone,
   using the arrow rule (black, white over ink).
 

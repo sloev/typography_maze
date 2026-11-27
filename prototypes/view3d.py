@@ -32,19 +32,36 @@ HW=0.26; TW=0.30; TH=0.40; EYE=0.30
 def rect(s,pad=HW):
     return (min(s['x0'],s['x1'])-pad,min(s['y0'],s['y1'])-pad,max(s['x0'],s['x1'])+pad,max(s['y0'],s['y1'])+pad)
 def inter(a,b): return a[0]<b[2] and b[0]<a[2] and a[1]<b[3] and b[1]<a[3]
-rs=[rect(s,0) for s in segs]; LOOK=7
-def tail(j):
-    s=segs[j];dx,dy=D[s['d']]; px,py=s['x1']-dx*LOOK,s['y1']-dy*LOOK
-    return (min(px,s['x1']),min(py,s['y1']),max(px,s['x1']),max(py,s['y1']))
-def ncross(j):
-    r=tail(j); return sum(1 for k,r2 in enumerate(rs) if abs(k-j)>1 and segs[k]['d']%2!=segs[j]['d']%2 and inter(r,r2))
-def clean(j):
-    s=segs[j];r=rect(s,0.1)
-    return not any(segs[k]['d']%2==s['d']%2 and inter(r,rect(segs[k],0.1)) for k in range(len(segs)) if k!=j)
-cands=[j for j,s in enumerate(segs) if s['n']>=LOOK+6 and clean(j)]
-scored=sorted(cands,key=lambda j:-ncross(j))
-cam=segs[scored[pick]]; dx,dy=D[cam['d']]
-ex,ey=cam['x1']-dx*(LOOK+2.2)+0.0137,cam['y1']-dy*(LOOK+2.2)+0.0113; yaw=math.atan2(dy,dx)
+# --- viewpoint: always where the most pathways cross the stretch ahead
+# exact crossings: every horizontal stroke against every vertical stroke (corridor width included)
+AHEAD=10
+Hs=[s for s in segs if s['d']%2==0]; Vs=[s for s in segs if s['d']%2==1]
+def arr(L,keys): return np.array([[s[k] for k in keys] for s in L],float)
+hA=arr(Hs,['x0','x1','y0','i']); vA=arr(Vs,['y0','y1','x0','i'])
+hlo,hhi=np.minimum(hA[:,0],hA[:,1]),np.maximum(hA[:,0],hA[:,1]); vlo,vhi=np.minimum(vA[:,0],vA[:,1]),np.maximum(vA[:,0],vA[:,1])
+cross={s['i']:[] for s in segs}
+m=HW*2
+for k in range(len(Hs)):
+    hit=(vA[:,2]>hlo[k]-m)&(vA[:,2]<hhi[k]+m)&(hA[k,2]>vlo-m)&(hA[k,2]<vhi+m)&(np.abs(vA[:,3]-hA[k,3])>1)
+    for j in np.nonzero(hit)[0]:
+        hs,vs=Hs[k],Vs[j]
+        cross[hs['i']].append(abs(vs['x0']-hs['x0']))   # distance along the horizontal stroke
+        cross[vs['i']].append(abs(hs['y0']-vs['y0']))   # distance along the vertical stroke
+best=[]
+for s in segs:
+    c=np.array(sorted(cross[s['i']]))
+    if len(c)==0 or s['n']<4: continue
+    for p in range(0,s['n']):
+        cnt=int(((c>p+0.6)&(c<=p+AHEAD)).sum())
+        if not np.any(np.abs(c-(p+0.3))<HW+0.05): best.append((cnt,s['i'],p))
+best.sort(key=lambda b:(-b[0],b[1]))
+seen=set();picks=[]
+for b_ in best:                      # one viewpoint per sentence
+    if b_[1] in seen: continue
+    seen.add(b_[1]);picks.append(b_)
+cnt,si,p=picks[pick]; cam=segs[si]; dx,dy=D[cam['d']]
+ex,ey=cam['x0']+dx*(p+0.3)+0.0137,cam['y0']+dy*(p+0.3)+0.0113; yaw=math.atan2(dy,dx)
+print("crossings ahead:",cnt)
 print("camera on sentence",cam['i'],"|",cam['text'][:140])
 R=22
 near=[s for s in segs if inter(rect(s,HW+TW),(ex-R-2,ey-R-2,ex+R+2,ey+R+2))]
@@ -146,10 +163,12 @@ L=lit(ox_,oy_,oz_).reshape(H,W)
 fx=(PX-(ex-R))*ppu; fy=((ey+R)-PY)*ppu; tx=np.clip(fx.astype(np.int32),0,N-2); ty=np.clip(fy.astype(np.int32),0,N-2)
 u=np.clip(fx-tx,0,1);v=np.clip(fy-ty,0,1);T_=tex.astype(np.float32)/255
 lettering=T_[ty,tx]*(1-u)*(1-v)+T_[ty,tx+1]*u*(1-v)+T_[ty+1,tx]*(1-u)*v+T_[ty+1,tx+1]*u*v
-alb=np.where(KIND==1,0.05+0.88*lettering,0.90)
+alb=np.where(KIND==1,0.03+0.95*lettering,0.96)
 lam=np.where(KIND==3,np.maximum(0,NX*sun[0]+NY*sun[1]),sun[2])
-AMB=0.20
-col=alb*(AMB+1.25*lam*L)
+AMB=0.62
+# skylight differs a little by face orientation, so walls keep their form in the shade
+sky_face=np.where(KIND==3,np.where(NX!=0,0.86,0.74),1.0)
+col=alb*(AMB*sky_face+0.75*lam*L)
 # sky: bright haze, glowing towards the sun
 r_=np.arange(H)[:,None];c_=np.arange(W)[None,:]
 vx_=np.cos(yaw-np.arctan((c_-W/2)/f));vy_=np.sin(yaw-np.arctan((c_-W/2)/f));vz_=(hor-r_)/f
@@ -157,7 +176,7 @@ nrm=np.sqrt(vx_**2+vy_**2+vz_**2);cosg=(vx_*sun[0]+vy_*sun[1]+vz_*sun[2])/nrm
 sky=0.86+0.14*np.clip(cosg,0,1)**8
 col=np.where(KIND==0,sky,col)
 dist=np.where(KIND==0,1e9,DEP*np.sqrt(1+((c_-W/2)/f)**2))
-Tr=np.exp(-dist/HAZE); HAZEC=0.93
+Tr=np.exp(-dist/HAZE); HAZEC=0.97
 col=col*Tr+HAZEC*(1-Tr)
 # light shafts: in-scattering where the haze is sunlit (coarse, upsampled)
 S6=6;cs,rs2=W//S6,H//S6;cc=np.arange(cs)*S6+3;rr=np.arange(rs2)*S6+3
@@ -175,7 +194,7 @@ for k in range(NS):
     Sc+=(tt<dep)*Lk*np.exp(-tt/HAZE)*phase*(R/NS)
 Sc=np.asarray(Image.fromarray(Sc).resize((W,H),Image.BILINEAR))
 col=col*(1-0.07*np.clip(Sc,0,8))+0.07*np.clip(Sc,0,8)*0.98
-img=np.clip(col,0,1)**1.1
+img=np.clip(col,0,1)**0.85
 @njit(cache=True)
 def fs(a):
     h,w=a.shape;o=np.zeros((h,w),np.uint8)
