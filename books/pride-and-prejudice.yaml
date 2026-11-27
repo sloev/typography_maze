@@ -1,0 +1,12 @@
+slug: pride-and-prejudice
+gutenberg: 1342
+title: Pride and Prejudice
+author: Jane Austen
+year: 1813
+chapter_pattern: "^(CHAPTER|Chapter) [IVXLC]+\\.?$"
+skip_until: "^It is a truth universally acknowledged"
+first_chapter: "CHAPTER I."
+stop_at: "\\[Illustration:\\s+THE\\s+END"
+shuffles: 200
+seed: 7
+robustness_drop: [like]

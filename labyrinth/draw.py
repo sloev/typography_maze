@@ -7,7 +7,7 @@ import math
 
 import cairo
 import numpy as np
-from shapely.geometry import LineString, Polygon, box
+from shapely.geometry import LineString, Point, Polygon, box
 from shapely.ops import unary_union
 
 MM = 72 / 25.4          # points per millimetre
@@ -101,35 +101,30 @@ def draw_maze(w, path, wmm, hmm, band=0.0, line_mm=None, anchors=(), labels_out=
     ctx.set_line_cap(cairo.LINE_CAP_SQUARE)
     _polyline(ctx, pts)
     ctx.stroke()
-    # chapter ticks: a short bar across the path where each chapter starts
-    if chapter_starts is not None:
-        for k, s in enumerate(chapter_starts):
-            if s == 0:
-                continue
-            x, y = pts[s]
-            ctx.set_line_width(lw * 3)
-            ctx.arc(x, y, 0.55, 0, 2 * math.pi)
-            ctx.set_source_rgb(1, 1, 1); ctx.fill_preserve()
-            ctx.set_source_rgb(0, 0, 0); ctx.set_line_width(0.15); ctx.stroke()
-    # start and end marks
+    # start and end: the only marks drawn on the path itself
     for (x, y), filled in ((pts[0], True), (pts[-1], False)):
         ctx.rectangle(x - 0.6, y - 0.6, 1.2, 1.2)
         ctx.set_source_rgb(0 if filled else 1, 0 if filled else 1, 0 if filled else 1)
         ctx.fill_preserve(); ctx.set_source_rgb(0, 0, 0); ctx.set_line_width(0.2); ctx.stroke()
     if anchors:
-        ink = unary_union([LineString(pts[k:k + 2]) for k in range(len(pts) - 1)]).buffer(lw / 2 + 0.02)
+        # annotations never touch the drawing: every arrow points at its place from the
+        # margin and stops GAP mm before the first line it would meet
+        GAP = 0.8
+        ink = unary_union([LineString(pts[k:k + 2]) for k in range(len(pts) - 1)]).buffer(lw / 2 + GAP)
         placed = place_labels([dict(a, px=fit(a["x"], a["y"])[0], py=fit(a["x"], a["y"])[1]) for a in anchors],
                               wmm, hmm, band, label_h or 3.2)
         for a in placed:
-            g = arrow_geometry(a["lx"], a["ly"], a["px"], a["py"])
-            ctx.set_source_rgb(0, 0, 0); _fill_geom(ctx, g.difference(ink))
-            ctx.set_source_rgb(1, 1, 1); _fill_geom(ctx, g.intersection(ink))
-            ctx.set_source_rgb(0, 0, 0)
-            # small ring around the anchor point itself, white over ink
-            ring = LineString([(a["px"] + 0.9 * math.cos(t), a["py"] + 0.9 * math.sin(t))
-                               for t in np.linspace(0, 2 * math.pi, 40)]).buffer(0.09)
-            _fill_geom(ctx, ring.difference(ink))
-            ctx.set_source_rgb(1, 1, 1); _fill_geom(ctx, ring.intersection(ink)); ctx.set_source_rgb(0, 0, 0)
+            ray = LineString([(a["lx"], a["ly"]), (a["px"], a["py"])])
+            hit = ray.intersection(ink)
+            ex, ey = a["px"], a["py"]
+            if not hit.is_empty:      # first point where the ray would enter the drawing's ink
+                coords = [c for g in getattr(hit, "geoms", [hit]) for c in g.coords]
+                d = min(ray.project(Point(c)) for c in coords)
+                ex, ey = ray.interpolate(d).x, ray.interpolate(d).y
+            a["tx"], a["ty"] = ex, ey
+            if math.hypot(ex - a["lx"], ey - a["ly"]) > 2.0:
+                ctx.set_source_rgb(0, 0, 0)
+                _fill_geom(ctx, arrow_geometry(a["lx"], a["ly"], ex, ey).difference(ink))
         if labels_out is not None:
             labels_out.extend(placed)
     surf.finish()
@@ -247,12 +242,17 @@ def draw_mineshaft(v3, path, wmm, hmm, azimuth=35.0, elevation=18.0, dist_factor
     return [(float(X[k]), float(Y[k])) for k in marks], vertical_scale
 
 
-def draw_path(vertices, path, wmm, hmm, line_mm=None, marks=()):
-    """Any 2D polyline (float coordinates), fitted to the box, long side vertical."""
+def draw_path(vertices, path, wmm, hmm, line_mm=None, marks=(), fixed=None):
+    """Any 2D polyline (float coordinates), fitted to the box, long side vertical.
+    fixed=(centre, extent): draw at a common scale instead, extent word units across the box."""
     v = np.asarray(vertices, float)
-    xmin, ymin = v.min(0); xmax, ymax = v.max(0)
-    rot = (xmax - xmin) > (ymax - ymin) and (hmm > wmm)
-    fit = Fit(xmin, ymin, xmax, ymax, 0, 0, wmm, hmm, rotate=rot)
+    if fixed is not None:
+        (cx, cy), e = fixed
+        fit = Fit(cx - e / 2, cy - e / 2, cx + e / 2, cy + e / 2, 0, 0, wmm, hmm)
+    else:
+        xmin, ymin = v.min(0); xmax, ymax = v.max(0)
+        rot = (xmax - xmin) > (ymax - ymin) and (hmm > wmm)
+        fit = Fit(xmin, ymin, xmax, ymax, 0, 0, wmm, hmm, rotate=rot)
     surf, ctx = _surface(path, wmm, hmm)
     ctx.set_line_width(line_mm or max(HAIR, 0.12 / MM))
     ctx.set_line_join(cairo.LINE_JOIN_ROUND)
@@ -271,3 +271,48 @@ def draw_path(vertices, path, wmm, hmm, line_mm=None, marks=()):
         ctx.set_line_width(0.15); ctx.stroke()
     surf.finish()
     return out, fit.s
+
+
+def draw_cutout(w, texts, path, wmm, hmm, cx, cy, radius, focus=(), max_font_mm=2.4):
+    """A magnified window of the walk around (cx, cy): every stroke is drawn as a thin
+    line with its sentence set along it, reading in the walking direction (the text
+    stands on the line, on its left-hand side). Strokes in `focus` are heavier and
+    set in semibold. radius is the half-width of the window in word units."""
+    ry = radius * hmm / wmm
+    fit = Fit(cx - radius, cy - ry, cx + radius, cy + ry, 0, 0, wmm, hmm)
+    s = fit.s                                # mm per word
+    fs = min(max_font_mm, 0.62 * s)          # type size follows the scale
+    surf, ctx = _surface(path, wmm, hmm)
+    ctx.rectangle(0, 0, wmm, hmm); ctx.clip()
+    focus = set(focus)
+    win = (cx - radius - 60, cy - ry - 60, cx + radius + 60, cy + ry + 60)
+    order = [k for k in range(w.N) if k not in focus] + sorted(focus)
+    for k in order:
+        x0, y0, x1, y1 = w.x0[k], w.y0[k], w.x1[k], w.y1[k]
+        if max(x0, x1) < win[0] or min(x0, x1) > win[2] or max(y0, y1) < win[1] or min(y0, y1) > win[3]:
+            continue
+        a, b = fit(x0, y0), fit(x1, y1)
+        heavy = k in focus
+        ctx.set_source_rgb(0, 0, 0)
+        ctx.set_line_width(0.32 if heavy else 0.1)
+        ctx.move_to(*a); ctx.line_to(*b); ctx.stroke()
+        L = math.hypot(b[0] - a[0], b[1] - a[1])
+        if L < 1 or fs < 0.9:
+            continue
+        ctx.select_font_face("EB Garamond", cairo.FONT_SLANT_NORMAL,
+                             cairo.FONT_WEIGHT_BOLD if heavy else cairo.FONT_WEIGHT_NORMAL)
+        ctx.set_font_size(fs)
+        ext = ctx.text_extents(texts[k])
+        if ext.x_advance <= 0:
+            continue
+        ctx.save()
+        ctx.translate(*a)
+        ctx.rotate(math.atan2(b[1] - a[1], b[0] - a[0]))
+        ctx.scale(L / ext.x_advance, 1.0)    # the sentence fills its stroke exactly
+        ctx.move_to(0, -0.25)
+        ctx.show_text(texts[k])
+        ctx.restore()
+    ctx.reset_clip()
+    ctx.set_line_width(0.25); ctx.rectangle(0, 0, wmm, hmm); ctx.stroke()
+    surf.finish()
+    return fit

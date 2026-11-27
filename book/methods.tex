@@ -1,151 +1,110 @@
-\chapter{Method}
+\chapter{How to read these drawings}
 \label{ch:method}
 
-\section{The walk}
+\section{A book as a walk}
 
-A book is read one sentence at a time and drawn as a path on a square grid. Each
-sentence becomes one straight stroke whose length is the sentence's number of
-words. Before a stroke is drawn, the path turns:
+Imagine reading a novel aloud while walking across an empty field. You take one
+step for every word. At the end of each sentence you stop and ask how it felt.
+If it was warm, hopeful or kind, you turn a quarter turn to the left. If it was
+cold, frightened or cruel, you turn a quarter turn to the right. If it was
+neither, a plain sentence about a door or a staircase, you keep walking
+straight ahead. Then you read the next sentence.
 
-\begin{itemize}
-\item ninety degrees to the \emph{left} if the sentence is positive,
-\item ninety degrees to the \emph{right} if it is negative,
-\item not at all if it is neutral.
-\end{itemize}
+The drawings in this book are the footprints of that walk. Every sentence is a
+straight line as long as the sentence has words, and every corner is a change
+of mood. Nothing has been placed by hand. The shape of a drawing is decided
+entirely by the order of the sentences, their lengths, and how they feel.
 
-\noindent The first stroke points east, and the turn of sentence $i$ is
-\[
-\tau_i=\operatorname{sign}\Bigl(\sum_{w\in s_i}a(w)\Bigr)\in\{-1,0,+1\},
-\]
-where $a(w)$ is the valence of word $w$ in the AFINN-165 lexicon (integers from
-$-5$ to $+5$; words not in the lexicon count as $0$). Because every stroke has a
-whole-number length and runs along a grid axis, every vertex, crossing and
-overlap of the drawing has exact integer coordinates. Nothing is rounded.
+How a sentence ``feels'' is measured with a published word list, AFINN, which
+gives some 3,400 English words a score from $-5$, reserved for the worst
+insults, through $-4$ for \emph{torture}, to $+5$ for \emph{superb} or
+\emph{breathtaking}. A sentence's score is the sum of its words' scores. Most words
+are not on the list at all, which is why so many sentences walk straight on.
 
-\paragraph{Names are not feelings.} A lexicon word is not scored when it is a
-name or title, that is, when it is capitalised and does not begin a sentence or
-a quotation (\emph{Miss} Bürstner, \emph{Block}). A word used this way in at
-least half of its occurrences in a book (and at least three times) is treated
-as a name throughout that book, even at the start of a sentence. The rule is
-applied automatically, and each chapter lists the names it found.
+Names are not feelings, so a capitalised word in the middle of a sentence, like
+\emph{Miss} in Miss Bürstner or \emph{Block}, the businessman in \emph{The
+Trial}, is not scored, and neither is any word a book mainly uses as a name.
 
-\paragraph{Sentences.} Text is taken from Project Gutenberg with the licence
-header and footer removed. Chapter headings and chapter subtitles are recorded
-but not drawn. A paragraph break always ends a sentence. Inside a paragraph, a
-sentence ends at \texttt{.\,!\,?} when the next word begins with a capital,
-a digit or an opening quotation mark, except after honorifics (Mr., Mrs., Dr.,
-\ldots) and single-letter initials, so ``Josef~K.'' does not end a sentence.
-Sentences are numbered \sref{1}, \sref{2}, \ldots\ in reading order; every
-reference to a sentence in this book uses that number.
+Sentences are numbered in reading order, and the book refers to them that way:
+\sref{1} is the first sentence of the novel.
 
-\section{The test against chance}
+\section{Seeing past chance}
 
-A drawing is the product of two things: what a book is made of (how long its
-sentences are and how they feel) and the order they come in. The first is not
-specific to the drawing; anyone could count it. The method is only interesting
-where the \emph{order} leaves a mark.
+Any long walk of this kind will tangle. Lines will cross, loops will form,
+some regions will turn black with ink. The question is always which of these
+shapes belong to \emph{this} book, and which any book would make.
 
-Every order-dependent measure is therefore compared with a \emph{shuffle
-baseline}: the same sentences, with the same lengths and the same turns, drawn
-again in random order, \lab{shuffles} times. The baseline keeps the book's
-material and destroys its sequence. For a measure $M$ with baseline mean $\mu$
-and standard deviation $\sigma$,
-\[
-z=\frac{M_{\text{book}}-\mu}{\sigma},
-\]
-and $p$ is the share of shuffles at least as far from $\mu$ as the book is
-(two-sided, with the book itself counted once). Twelve measures are tested on
-every book, so a result is called \emph{significant} only when $|z|\ge3$, a
-threshold that keeps the chance of any false alarm in a book's twelve tests
-below about 3\,\%. Smaller deviations are reported, but not interpreted.
+So every drawing is compared with its own shadows. The book's sentences are
+shuffled like a deck of cards, two hundred times, and each shuffled version is
+walked and drawn. A shuffled book has exactly the same sentences, with the same
+lengths and the same feelings. Only the order is lost. When the real book
+behaves like its shuffles, the shape is simply what its material makes. When
+it behaves as none of its shuffles do, the shape is the author's, because it
+comes from the order in which things are told.
 
-\section{Measures of the whole drawing}
+The essays in this book only call something a property of a novel when it
+stands clearly apart from its shuffles. The figures behind each such claim are
+collected in the notes at the end of the book.
+
+\section{Shapes to look for}
 
 \begin{description}
-\item[Stride] mean sentence length in words, and its coefficient of variation
-(standard deviation over mean). Order-free.
-\item[Turn shares] the fractions of left, right and straight sentences.
-Order-free.
-\item[Handedness] the net rotation, $\sum_i\tau_i/4$, in full turns. Negative
-means the book turned right (negative) more often than left. Order-free.
-\item[Turn entropy] $H_1$ is the Shannon entropy of the turn sequence (in bits;
-at most $\log_2 3\approx1.585$). $H_2$ is the entropy of a turn given the
-turn before it. $H_2<H_1$ means a sentence's feeling is partly predictable
-from the sentence before. Order-dependent.
-\item[Recoil] of all pairs of consecutive sentences that both turn, the share
-that turn the \emph{same} way: two lefts or two rights, which together reverse
-the path. Recoil measures how much a feeling persists. \emph{Vacillation}
-is the complementary share of opposite pairs, which make the path zig-zag.
-\item[Corridors] a corridor is a run of consecutive neutral sentences, which
-draws a straight line. We report the longest and the mean run.
-\item[Drift] the straight-line distance from the first to the last point,
-divided by the total length of the path. Near 0, the book ends near where it
-began; near 1, it travelled.
-\item[Gyration] the radius of gyration of the drawing (the root-mean-square
-distance of the path from its centre of mass), divided by the square root of
-the path length, so books of different length can be compared. Its growth
-over narrative time is the \emph{gyration curve}.
-\item[Sprawl] occupied grid cells divided by the area of the convex hull. Low
-sprawl is a sparse, far-reaching drawing; high sprawl is compact.
-\item[Texture] the box-counting dimension of the drawing between 2 and 64 word
-units: 1 for a line, approaching 2 for a drawing that fills the plane.
-\item[Crossings] proper crossings between strokes that are not neighbours in
-the text, per sentence. The \emph{crossing gap} of a crossing is the distance in
-the book, in sentences, between the two sentences that cross; we report its
-median.
-\item[Palimpsest] the total length, in words, of strokes that lie exactly on
-top of an earlier stroke.
-\end{description}
-
-\section{Local structures}
-
-These are found automatically and are the places the labels in each drawing
-point to.
-
-\begin{description}
-\item[Knot] the drawing is divided into cells of 24\,$\times$\,24 word units,
-and crossings are counted per cell, smoothed over each cell's neighbours. A
-knot is a local maximum. For a knot we report its crossings, the sentences
-that form it, which chapters they come from, and its \emph{time span}: how far
-apart in the book its sentences are.
-\item[Hub] the sentence crossed by the most other sentences.
-\item[Return] the crossing whose two sentences are farthest apart in the book:
-the place where the end of the book walks over its beginning.
-\item[Coil] the twelve consecutive sentences with the largest net rotation: a
-spiral.
-\item[Darkest passage] the thirty consecutive sentences with the lowest summed
-AFINN score.
-\item[Longest corridor] the run of neutral sentences with the most words.
-\item[Palimpsest] the longest stretch where a later sentence is drawn exactly
-on top of an earlier one.
+\item[Knots] places where the path crosses itself again and again. A knot is
+most interesting when the sentences that make it come from far-apart parts of
+the book: scenes that the author keeps apart, which the drawing lays on top of
+each other.
+\item[The hub] the single sentence that is crossed most often by others.
+\item[The return] the crossing between the two sentences that lie farthest
+apart in the book, where the late book walks across its own beginning.
+\item[Coils] sentences that keep turning the same way spiral tightly. A coil is
+a passage that dwells in one feeling.
+\item[Corridors] runs of plain sentences draw long straight lines: description,
+procedure, a room being looked at.
+\item[The darkest passage] the thirty sentences in a row with the lowest score.
+\item[Palimpsests] sometimes a later sentence is drawn exactly on top of an
+earlier one, the way old manuscripts were written over.
 \end{description}
 
 \section{The mineshaft}
 
-The same walk is also built in three dimensions. The horizontal turns are as
-before, but every left turn also tilts the path \lab{shaft-delta}\textdegree{}
-upwards and every right turn tilts it the same amount down. The elevation
-angle of stroke $i$ is therefore $\delta\sum_{j\le i}\tau_j$ (clamped to
-$\pm80$\textdegree). A book that turns right more than left descends, and
-where it lingers in one mood it tunnels steeply. The shaft is drawn in
-perspective from an angled side view, far strokes first, each with a white
-casing so that nearer passages visibly pass in front of farther ones. Depth is
-compressed by the stated vertical scale, as in a geological section.
+The same walk can also be built in three dimensions. As before, each warm
+sentence turns the path left and each cold one turns it right, but now every
+left turn also tilts the path slightly upwards and every right turn tilts it
+slightly down. A book that turns right more than left sinks; a book that
+lingers in one feeling tunnels steeply. Seen from the side, the book becomes a
+shaft dug through the ground, with the chapters marked along it.
 
-\section{What this method cannot see}
+\section{More instruments}
 
-The turns come from a word list applied to single sentences. AFINN was built
-for English social-media text. It does not read irony, negation (``not
-happy'' scores as \emph{happy}) or context. For translated books it reads the
-\emph{translation}, and a translator's word choices change the drawing. These
-limits apply equally to the book and to its shuffles, so they cannot by
-themselves produce a significant $z$. They do limit what a significant $z$
-means: it is a statement about the order of the scored sentences, not about
-the author's intentions.
+The walk is one way of looking. The later chapters use five more, each a
+different picture of the same text:
 
-\paragraph{Robustness.} Some common words are ambiguous in a way a word list
-cannot resolve. \emph{Like} is a feeling (``I'd like'') or a comparison (``like
-a dog''). For each book, every test is repeated with such words left unscored,
-and a result is reported as a property of the book only if it survives. The
-Variations chapter (p.~\pageref{ch:variations}) draws the same book with two
-other turning rules.
+\begin{description}
+\item[The vocabulary record] the whole dictionary laid out on a disc like the
+groove of a record, from the commonest word at the centre to the rarest at the
+rim. Every word a book uses is a black dot.
+\item[Tree rings] the book cut like a trunk: the first page at the centre,
+each chapter a ring whose area is its length, each sentence a grain as long as
+its words are long.
+\item[The loom] the names a book uses most are the warp threads, and the book
+runs down through them as weft. A black stitch marks each stretch where a name
+occurs, so the whole cast becomes cloth.
+\item[Echoes] every recurring word is drawn as one arch over the length of
+the book, spanning its longest absence. High arches are words that return from
+far away.
+\item[The tide] the share of words spoken aloud, inside quotation marks, as a
+black tide rising and falling through the book.
+\end{description}
+
+\section{What the drawings cannot see}
+
+A word list is a blunt instrument. It does not hear irony, it does not notice
+``not'' (``not happy'' counts as happy), and it cannot tell a feeling from a
+figure of speech. A lawyer's empty reassurances score as hope. For a translated
+novel, it reads the translator's words, not the author's.
+
+These blind spots are the same for a book and for its shuffles, so they cannot
+by themselves make a book stand apart from chance. But they decide what the
+drawings can honestly be said to show: the pattern of the surface of the words,
+in the order the author chose. Where a single ambiguous word changes a result,
+the essays say so.

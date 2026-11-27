@@ -5,182 +5,168 @@
   \begin{tikzpicture}
   \begin{axis}[width=40mm, height=21mm, scale only axis=false, ymin=0, axis y line=none,
       xmin=\lab{bmin-#1}, xmax=\lab{bmax-#1}, enlarge x limits=0.06, xtick=\empty,
-      title={#2}, title style={font=\figfont\scriptsize, yshift=-1.5mm},
-      clip=false]
+      title={#2}, title style={font=\figfont\scriptsize, yshift=-1.5mm}, clip=false]
     \addplot[const plot mark mid, black, line width=0.4pt] table {../build/the-trial/baseline-#1.dat};
     \draw[line width=1.1pt] (axis cs:\lab{raw-#1},0) -- (axis cs:\lab{raw-#1},\pgfkeysvalueof{/pgfplots/ymax});
-    \node[anchor=north, font=\figfont\scriptsize] at (axis cs:\lab{raw-#1},0) {$z=\lab{z-#1}$};
   \end{axis}
   \end{tikzpicture}}
-% z in bold when significant (|z| >= 3), decided by the build
-\newcommand\zcell[1]{\ifnum\lab{sig-#1}=1 \textbf{\lab{z-#1}}\else\lab{z-#1}\fi}
-\newcommand\rzcell[1]{\ifnum\lab{rsig-#1}=1 \textbf{\lab{rz-#1}}\else\lab{rz-#1}\fi}
-\newcommand\vrow[2]{#2 & \lab{m-#1} & \lab{b-#1} $\pm$ \lab{sd-#1} & \zcell{#1} & \rzcell{#1}\\}
 
 \chapter[The Trial]{The Trial}
 \label{ch:trial}
 
 \begin{center}\small
 \textsc{Franz Kafka}, \emph{Der Proce\ss}, 1925\\
-in the English translation by \lab{translator} (Project Gutenberg \#\lab{gid})
+in the English translation by \lab{translator}
 \end{center}
 
 \bigskip
-\noindent The specimen has \lab{sentences} sentences and \lab{words} words in
-\lab{chapters} chapters. \lab{m-share-left-pct}\,\% of its sentences turn left
-(positive), \lab{m-share-right-pct}\,\% right (negative), and
-\lab{m-share-straight-pct}\,\% go straight. Three lexicon words are used as
-names in this book and are not scored: \lab{names}. A sentence averages
-\lab{m-stride_mean} words, with a coefficient of variation of
-\lab{m-stride_cv}.
+\noindent ``Someone must have been telling lies about Josef K., he knew he had
+done nothing wrong but, one morning, he was arrested.'' So begins a walk of
+\lab{sentences} sentences and \lab{words} words, through a bank, a boarding
+house, attic law courts, a painter's cramped studio and a dark cathedral, to a
+quarry at the edge of town.
 
-The table measures the book's order: each measure is set against the same
-sentences shuffled \lab{shuffles} times. The last column repeats the test with
-\lab{r-words} left unscored (p.~\pageref{sec:like}).
+Walked sentence by sentence, the novel is surprisingly even-tempered. Almost
+four sentences in ten (\lab{m-share-straight-pct}\,\%) carry no feeling the word
+list can detect and go straight ahead. The rest divide almost evenly: a little
+more often warm (\lab{m-share-left-pct}\,\%) than cold
+(\lab{m-share-right-pct}\,\%). K.'s world is not loud. It is a world of
+politeness, procedure and small talk, through which the threat of the court
+seeps rather than strikes.
 
-\begin{table}[h]
-\centering\figfont\small
-\begin{tabular}{@{}lrrrr@{}}
-\toprule
- & \emph{Trial} & shuffled & $z$ & $z$ w/o \lab{r-words}\\
-\midrule
-\vrow{recoil}{Recoil}
-\vrow{vacillation}{Vacillation}
-\vrow{entropy_h2}{Turn entropy $H_2$}
-\vrow{corridor_mean}{Mean corridor}
-\vrow{corridor_max}{Longest corridor}
-\vrow{drift}{Drift}
-\vrow{gyration_final}{Gyration}
-\vrow{sprawl}{Sprawl}
-\vrow{texture}{Texture}
-\vrow{crossing_rate}{Crossings / sentence}
-\vrow{crossing_gap_median}{Median crossing gap}
-\vrow{palimpsest_words}{Palimpsest (words)}
-\bottomrule
-\end{tabular}
-\caption*{Vital signs. Bold: significant ($|z|\ge3$, see p.~\pageref{ch:method}).}
-\end{table}
+What makes the drawing of \emph{The Trial} its own is not how much feeling the
+novel holds, but how that feeling is arranged. The opposite page and the essay
+that follows are about that arrangement.
 
 \clearpage
-\section{Reading the drawing}
+\section{A walk through the court}
 
-The drawing opposite is the whole book. It begins at the black square and ends
-at the open one. Open circles on the path mark where chapters begin. Every label
-points to a structure found by the procedures of the method chapter. None was
-placed by hand.
+The drawing opposite is the whole novel. It begins at the black square and
+ends at the open one. The lettered labels point to the shapes described in the
+first chapter; a program found them, not a reader. The arrows stop at the edge
+of the drawing, and the two pages that follow magnify each lettered place, with
+the sentences written along the path, so they can be read where they lie.
 
-\begin{finding}{Knots I and II} Knot~I, the densest tangle, has
-\lab{knotA-crossings} crossings among \lab{knotA-nsent} sentences from chapters
-\lab{knotA-chapters}. Most are Block's account of his years-long case
-(chapter~8, \lab{knotA-topn} sentences). The rest come from the court offices
-in chapter~3 (\lab{knotA-secondn}), the painter's talk of acquittal in
-chapter~7, and K. waiting in the cathedral in chapter~9. Knot~II, beside it,
-is mostly the painter (chapter~\lab{knotB-top}). The places K. goes to learn
-about his case, hundreds of sentences apart in the book, are drawn over one
-another.
+\begin{finding}{The knots (A, B)} The densest tangle, Knot~I, has
+\lab{knotA-crossings} crossings among \lab{knotA-nsent} sentences, and they do
+not belong to one scene. Most are Block's long account of his own case in
+chapter~8. Across them run sentences from the court offices in chapter~3, from
+the painter's talk of acquittal in chapter~7, and from K.'s wait in the
+cathedral in chapter~9. Knot~II, beside it, is mostly the painter. The places
+K. visits to learn about his case, hundreds of pages apart, end up in the same
+small patch of ground.
 \end{finding}
 
-\begin{finding}{Hub} The most-crossed sentence is \lab{hub-ref}
-(chapter~\lab{hub-ch}), crossed \lab{hub-n} times. A court official is speaking:
-``\lab{hub-quote}'' Eight of the sentences that cross it are from Block's
-conversation with K. in chapter~8.
+\begin{finding}{The hub (C)} The sentence crossed most often (\lab{hub-n} times)
+is spoken by a court official in chapter~\lab{hub-ch}: ``\lab{hub-quote}''
+Eight of the sentences that cut across it come from Block, in the
+conversation where he describes years of hearings that ``went through the
+same things anyway''.
 \end{finding}
 
-\begin{finding}{Coil} From \lab{coil-first} to \lab{coil-last} the path turns
-\lab{coil-q} quarter turns to the \lab{coil-dir}, two and a half full circles
-in twelve sentences. It is the lawyer Huld's report of progress: ``the results
-are very encouraging'', ``nothing has been lost yet''. The narration says
-``there was always some progress, but he could never be told what sort of
-progress it was''. The positive words make a tight left-hand spiral: the
-drawing records the surface of talk that goes round in circles.
-\end{finding}
-
-\begin{finding}{Corridor} The longest run of neutral sentences
-(\lab{cor-n}~sentences, \lab{cor-words} words, chapter~\lab{cor-ch}) is the
-inventory of Titorelli's room: ``It was hardly long enough or broad enough to
-make two steps.'' Description without feeling draws a straight line.
-\end{finding}
-
-\begin{finding}{Darkest passage} The thirty sentences with the lowest summed
-score (\lab{dark-score}) begin at \lab{dark-first}, chapter~\lab{dark-ch}. It is
-the lawyer's account of the court: documents ``mislaid or lost completely'', a
-trial that is not public, an accused with no access to the records.
-\end{finding}
-
-\begin{finding}{Return} \lab{ret-i} (chapter~\lab{ret-chi}) and \lab{ret-j}
-(chapter~\lab{ret-chj}) cross, \lab{ret-gap} sentences apart. K.'s relief in the
-court offices, ``\lab{ret-qi}'', is crossed by K. alone in the cathedral:
+\begin{finding}{The return (D)} The two sentences that cross while lying farthest
+apart in the book are \lab{ret-gap} sentences apart: K.'s sudden relief in the
+court offices, ``\lab{ret-qi}'', and K. alone in the cathedral,
 ``\lab{ret-qj}''
 \end{finding}
 
-\begin{finding}{Palimpsest} The longest overwriting is \lab{pal-len} words of
-\lab{pal-j} laid on \lab{pal-i}, both in chapter~\lab{pal-chi}, where K. grows
-faint in the court offices: ``\lab{pal-qj}''
+\begin{finding}{The palimpsest (H)} Where the path runs exactly over itself for
+the longest stretch, K. is growing faint in the court offices, and the
+sentence laid on top reads ``\lab{pal-qj}''
 \end{finding}
+
+\noindent The coil, the corridor and the darkest passage, also labelled, have
+their own pages below.
 
 \clearpage
 \thispagestyle{empty}
 \noindent\hspace*{0mm}\labelledfigure{maze.pdf}{../build/the-trial/maze-labels.tex}
 
 \clearpage
-\section{Against chance}
-
-Each panel shows one measure: the outline is its distribution over
-\lab{shuffles} shuffles of \emph{The Trial}'s own sentences, and the bar is
-the book.
-
-\medskip
-\noindent\strip{recoil}{Recoil}\hfill\strip{vacillation}{Vacillation}\hfill\strip{entropy_h2}{Turn entropy $H_2$}\\[1mm]
-\strip{corridor_mean}{Mean corridor}\hfill\strip{corridor_max}{Longest corridor}\hfill\strip{drift}{Drift}\\[1mm]
-\strip{gyration_final}{Gyration}\hfill\strip{sprawl}{Sprawl}\hfill\strip{texture}{Texture}\\[1mm]
-\strip{crossing_rate}{Crossings / sentence}\hfill\strip{crossing_gap_median}{Median crossing gap}\hfill\strip{palimpsest_words}{Palimpsest}
-
-\medskip
-Four measures leave the shuffled range: recoil, vacillation, $H_2$ and the mean
-corridor. They say one thing. \emph{The Trial}'s feelings come in runs:
-negative after negative, positive after positive, neutral after neutral, more
-often than chance allows. The table counts consecutive pairs (rows: first
-sentence; columns: second) against the number expected if order did not matter:
-
-\begin{center}\figfont\small
-\begin{tabular}{@{}lrrr@{}}
-\toprule
- & L & S & R\\
-\midrule
-L & \lab{tr-LL} / \lab{te-LL} & \lab{tr-LS} / \lab{te-LS} & \lab{tr-LR} / \lab{te-LR}\\
-S & \lab{tr-SL} / \lab{te-SL} & \lab{tr-SS} / \lab{te-SS} & \lab{tr-SR} / \lab{te-SR}\\
-R & \lab{tr-RL} / \lab{te-RL} & \lab{tr-RS} / \lab{te-RS} & \lab{tr-RR} / \lab{te-RR}\\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\noindent The diagonal is over-represented (L\,L \lab{tq-LL}$\times$,
-S\,S \lab{tq-SS}$\times$, R\,R \lab{tq-RR}$\times$). In the drawing, runs of the
-same turn make the path double back on itself, which is why it is so dense. The
-large-scale shape, however, cannot be told apart from chance. Drift, gyration,
-sprawl, texture and the number of crossings all fall inside the shuffled range.
-Any ordering of these sentences would have tangled about this much. What the
-order adds is \emph{where} the tangle sits and which sentences it ties together.
+\section*{The lettered places, magnified}
+\noindent\input{../build/the-trial/cutouts.tex}
 
 \clearpage
-\section{Knot I, enlarged}
+\section{Feelings that linger}
+
+If the sentences of \emph{The Trial} were dealt out at random, a cold sentence
+would be followed by another cold sentence about as often as cold sentences
+occur at all, \lab{base-R}\,\% of the time. In Kafka's order it happens
+\lab{pp-R}\,\% of the time. The same holds for warmth (\lab{pp-L}\,\% against
+\lab{base-L}\,\%) and, more weakly, for plainness: a sentence without feeling
+is followed by another \lab{pp-S}\,\% of the time, against
+\lab{base-S}\,\% by chance.
+
+The difference looks small, but it is steady across three and a half thousand
+sentences, and it is the clearest signature in the drawing. When the novel's
+sentences were shuffled two hundred times, not one shuffled version kept its
+moods together as the novel does.
+
+\begin{figure}[h]
+\centering
+\strip{recoil}{Same turn twice}\hfill\strip{entropy_h2}{Predictability}\hfill\strip{corridor_mean}{Plain runs}
+\caption*{\small Each outline shows how two hundred shuffled versions of \emph{The Trial}
+behave; the black bar is the novel. For predictability, lower means more
+predictable.}
+\end{figure}
+
+In the drawing this shows as doubling back. Two turns the same way reverse the
+path, so moods that persist fold the line over on itself, and the drawing grows
+dense. Feeling in \emph{The Trial} is not a series of shocks. It is a weather
+that settles over a passage and stays.
+
+What the order does \emph{not} change is just as telling. The overall size of
+the drawing, how far it wanders from its start, how often it crosses itself:
+all of these are what the shuffled books produce too. Kafka's sentences would
+tangle this much in any order. What his order decides is where the tangle sits,
+and which scenes it binds together.
+
+\clearpage
+\section{Where the tangle sits}
 
 \begin{figure}[h]
 \centering
 \includegraphics{zoom-A.pdf}
-\caption{The square of $2\times\lab{knotA-radius}$ word units around Knot~I.
-\lab{knotA-legend}. Open circles: crossings.}
+\caption{Knot~I, enlarged. \lab{knotA-legend}. Small circles: crossings.}
 \end{figure}
 
-\noindent Knot~I is made of \lab{knotA-nsent} sentences, and its crossings join
-sentences a median \lab{knotA-gap} sentences apart. It is not one passage
-folding on itself. Block's case runs through it, and the court offices, the
-painter and the cathedral cut across Block. Knot~II (\lab{knotB-crossings}
-crossings, chapters \lab{knotB-chapters}) is made of similar material in other
-proportions (\lab{knotB-legend}).
+\noindent Up close, Knot~I is a grid of passing conversations. The solid lines
+are Block, the businessman who has let his case consume his life and who sleeps
+in a maid's room at the lawyer's house. The dashed lines are the court offices,
+where K. grows faint among the waiting defendants. The dotted lines are the
+painter Titorelli, who explains with great patience that real acquittal never
+happens. None of these scenes knows about the others. The drawing makes them
+neighbours, and they share one subject: the long, slow machinery of a case
+that does not end.
 
 \clearpage
-\section{Time}
+\section{Going round in circles}
+
+\begin{finding}{The coil (E)} The tightest spiral in the drawing turns
+\lab{coil-q} quarter turns, two and a half full circles, in only twelve
+sentences, starting at \lab{coil-first}. It is the lawyer Huld reporting
+progress: ``the results are very encouraging'', ``nothing has been lost yet''.
+The narration knows better: ``There was always some progress, but he could
+never be told what sort of progress it was.'' The word list hears only the
+encouragement, and so the most hopeful-looking shape in the whole drawing is a
+lawyer talking his client round in circles. It is the one place where the
+method's deafness to irony draws Kafka's irony exactly.
+\end{finding}
+
+\begin{finding}{The corridor (G)} The longest straight line, \lab{cor-n} plain
+sentences and \lab{cor-words} words, is the description of Titorelli's room:
+``It was hardly long enough or broad enough to make two steps.'' The longest
+corridor in the book is a room with no space to walk in.
+\end{finding}
+
+\begin{finding}{The darkest passage (F)} The thirty coldest sentences in a row
+are not the execution. They begin at \lab{dark-first}, in the lawyer's calm
+account of how the court works: documents ``mislaid or lost completely'', a
+trial that is not public, an accused who may not see the charges. The darkest
+pages of \emph{The Trial} are not violent. They are administrative.
+\end{finding}
+
+\section{When things happen}
 
 \begin{center}
 \begin{tikzpicture}[x=110mm,y=1mm, font=\figfont\scriptsize]
@@ -197,7 +183,6 @@ proportions (\lab{knotB-legend}).
   \foreach \x in \chl {\draw[line width=0.4pt] (\x,-1.2) -- (\x,1.2);}
   \foreach \x [count=\c] in \chs {\node[anchor=north west, inner sep=1pt] at (\x,-1.2) {\c};}
   \node[anchor=west] at (1.01,0) {chapters};
-  % event labels alternate between two heights so neighbours never overprint
   \edef\evs{\lab{tl-dark}/darkest/9,\lab{tl-coil}/coil/14,\lab{tl-cor}/corridor/9,\lab{tl-hub}/hub/14}
   \foreach \p/\t/\d in \evs
      {\draw (\p,-6) -- (\p,-\d); \node[anchor=north] at (\p,-\d) {\t};}
@@ -206,89 +191,65 @@ proportions (\lab{knotB-legend}).
 \end{tikzpicture}
 \end{center}
 
-\noindent On the time line, every structure in the drawing is placed at its
-position in the book. Knot~I gathers sentences from the court offices
-(chapter~3), then in bursts from the painter, Block and the cathedral. The hub
-lies in chapter~3. The coil, the darkest passage and the corridor all fall in
-chapter~7, the lawyer and the painter. The return arc joins chapter~3 to the
-cathedral.
-
-\begin{center}
-\begin{tikzpicture}
-\begin{axis}[width=105mm, height=48mm, xmin=0, xmax=1, ymin=0, xlabel={narrative time}, ylabel={radius of gyration (words)},
-  label style={font=\figfont\scriptsize}, legend style={draw=none, font=\figfont\scriptsize, at={(0.02,0.98)}, anchor=north west}]
-  \addplot[name path=hi, draw=none, forget plot] table[x=t,y=hi] {../build/the-trial/gyration.dat};
-  \addplot[name path=lo, draw=none, forget plot] table[x=t,y=lo] {../build/the-trial/gyration.dat};
-  \addplot[pattern=north east lines, draw=none] fill between[of=hi and lo];
-  \addlegendentry{shuffled, 5--95\,\%}
-  \addplot[black, dashed, line width=0.4pt] table[x=t,y=mid] {../build/the-trial/gyration.dat};
-  \addlegendentry{shuffled, median}
-  \addplot[black, line width=1pt] table[x=t,y=rg] {../build/the-trial/gyration.dat};
-  \addlegendentry{\emph{The Trial}}
-\end{axis}
-\end{tikzpicture}
-\end{center}
-
-\noindent How far the drawing has spread at each moment of reading. Half the
-final spread is reached after \lab{rg-half}\,\% of the book. The curve stays
-inside the shuffled band almost throughout (above it for
-\lab{rg-above-pct}\,\% of narrative time), and its final value is ordinary
-($z=\lab{z-gyration_final}$). \emph{The Trial} does not open out or close in
-more than its sentences would in any order.
+\noindent Laid out along the length of the book, the shapes cluster. The coil,
+the corridor and the darkest passage all fall in chapter~7, where K. goes from
+the lawyer to the manufacturer to the painter, collecting advice that leads
+nowhere. Knot~I draws its sentences from the court offices and then, in
+bursts, from the painter, from Block and from the cathedral. The return arc
+reaches from the court offices to the cathedral. The middle of the novel, the
+long stretch of consultations, is where its drawing knots and spirals: in
+chapters 7 and 8 a sentence is crossed \lab{chx-7} and \lab{chx-8} times on
+average. The arrest is drawn in more open lines (\lab{chx-1}), and the
+execution most openly of all (\lab{chx-10}). The one exception is the short
+fifth chapter, in which K. finds two warders being whipped in a lumber room at
+the bank. Per sentence it is the most crossed of all (\lab{chx-5}), as if the
+path could not get away from that room.
 
 \clearpage
-\section{The mineshaft, and one word}
+\section{The shaft, and the word \emph{like}}
 \label{sec:like}
 
 \begin{figure}[h]
 \centering
 \begin{minipage}[t]{58mm}\centering
 \includegraphics{mineshaft-half.pdf}\\[-1mm]
-{\figfont\scriptsize all of AFINN: ends \lab{shaft-final} words \emph{above} the start}
+{\figfont\scriptsize every word scored}
 \end{minipage}\hfill
 \begin{minipage}[t]{58mm}\centering
 \includegraphics{mineshaft-r.pdf}\\[-1mm]
-{\figfont\scriptsize without \lab{r-words}: ends \lab{r-shaft-final} words \emph{below}}
+{\figfont\scriptsize \emph{like} not scored}
 \end{minipage}
-\caption{\emph{The Trial} as a shaft: each left turn tilts the path
-\lab{shaft-delta}\textdegree{} up and each right turn tilts it down. Angled side
-view, perspective, same vertical scale (\lab{shaft-vscale}) for both.}
+\caption{\emph{The Trial} as a shaft, seen from the side. Warm sentences tilt
+the path up, cold ones down; circles mark chapters. Depth is drawn at
+\lab{shaft-vscale}.}
 \end{figure}
 
-\noindent The shaft makes the balance of left and right turns visible, and here
-it shows a weakness of the word list. Scored as AFINN prescribes, \emph{The
-Trial} turns left \lab{net} more times than right, and the shaft climbs.
-The largest single source of positive score is the word \emph{like} (+2),
-used most often as a comparison: ``seem like'', ``like this'', ``like a dog''.
-Left unscored, it reverses the balance (\lab{r-net} turns) and the shaft
-descends. The direction of the shaft is decided by how one word is read. It
-is not a finding about Kafka.
+\noindent One would expect \emph{The Trial} to sink. It ends with a man killed
+in a quarry, ``like a dog''. Drawn with every word scored, it climbs. The reason
+is a single word. \emph{Like} is the word list's largest source of warmth in
+this novel. The list counts it as affection, but Kafka (and his translator)
+mostly use it to compare: ``seem like'', ``like this'', ``like a dog''. Score
+it as nothing, and the balance tips: the novel turns right more often than
+left, and the shaft descends.
 
-The tests of order do not depend on that word. Recoil ($z=\lab{rz-recoil}$),
-$H_2$ ($z=\lab{rz-entropy_h2}$) and the mean corridor
-($z=\lab{rz-corridor_mean}$) are as strong without it, and the large-scale
-measures stay inside the shuffled range (last column of the table on
-p.~\pageref{ch:trial}).
+So the drawing cannot say whether \emph{The Trial} as a whole is warm or cold.
+That depends on how one reads one small word, and the method has no way to
+decide. What survives either reading is the finding of the previous pages:
+the moods of the novel linger, whichever way \emph{like} is counted.
 
 \clearpage
-\section{Findings}
+\section{What the drawing says}
 
-\begin{enumerate}
-\item \emph{The Trial}'s feelings persist. Recoil (\z{recoil}), vacillation
-(\z{vacillation}), conditional turn entropy (\z{entropy_h2}) and the mean
-corridor (\z{corridor_mean}) depart from chance. Consecutive sentences agree in
-valence, including neutrality, more often than the same sentences in random
-order. The result does not depend on the ambiguous word \emph{like}.
-\item Its large-scale geometry is that of its material. Drift, gyration,
-sprawl, texture and crossing rate are all within $|z|<3$. The drawing is as
-tangled as any shuffle of these sentences.
-\item Its densest tangle joins the places where K. tries to learn about his
-case: the court offices, the painter, Block and the cathedral. The most-crossed
-sentence is a court official's: they would all ``like to be helpful''.
-(Descriptive; knot positions are not tested against chance.)
-\item The lawyer's reassurances form the drawing's tightest spiral, a positive
-one. The word list reads the surface of a speech the novel presents as empty.
-\item Whether the book as a whole leans positive or negative, and so whether
-its shaft rises or falls, depends on how \emph{like} is scored. The method
-cannot settle it, and this book does not claim it.
-\end{enumerate}
+Seen from above, \emph{The Trial} is a dense, folded thing, its tangles
+gathered in the middle of the book, where K. is passed from one adviser to the
+next. Its feelings are quiet and they linger: plain sentences follow plain
+sentences, and a passage that turns cold tends to stay cold. Its knots bind
+together the scenes in which K. tries to understand his case, scenes that the
+novel keeps apart and the drawing lays on top of one another. Its tightest
+spiral is hope, and the hope is empty. Its darkest stretch is a description of
+procedure.
+
+None of this replaces reading the novel. But a drawing can show at a glance
+something a reader only feels over many pages: that \emph{The Trial} does not
+progress so much as circle, and that the circling happens in the rooms where
+answers are promised.

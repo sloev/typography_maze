@@ -88,19 +88,30 @@ def _split_paragraph(p):
 
 
 def load(gid, title, author, translator="", chapter_pattern=r"^\s*(Chapter|CHAPTER)\s+\S+.*$",
-         skip_until=None):
+         skip_until=None, first_chapter=None, stop_at=None):
+    """chapter_pattern=None: the text has no chapters (one chapter, from skip_until on).
+    first_chapter: name of a chapter whose heading lies before skip_until.
+    stop_at: regex; text from its first match on is dropped (back matter)."""
     body = strip_gutenberg(fetch(gid))
     if skip_until:  # drop front matter (title page, copyright lines) before the first chapter
         k = re.search(skip_until, body, re.M)
         body = body[k.start():] if k else body
+    if stop_at:
+        k = re.search(stop_at, body, re.M)
+        body = body[:k.start()] if k else body
     paras = re.split(r"\n\s*\n", body)
     sentences, chapters, chapter_starts, subtitles = [], [], [], []
     chap, offset, pnum, just_headed = -1, 0, 0, False
-    cre = re.compile(chapter_pattern)
+    if chapter_pattern is None or first_chapter:
+        chap = 0
+        chapters.append(first_chapter or title); chapter_starts.append(0); subtitles.append("")
+    cre = re.compile(chapter_pattern or r"(?!x)x")
     for raw in paras:
         p = re.sub(r"\s+", " ", raw).strip()
         offset = body.find(raw.strip()[:40], offset) if raw.strip() else offset
         if not p:
+            continue
+        if p.startswith("[") and p.endswith("]"):    # Gutenberg illustration or editorial note
             continue
         if cre.match(p) and len(p) < 80:
             chap += 1

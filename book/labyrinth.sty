@@ -33,7 +33,8 @@
 \newcommand\z[1]{$z=\lab{z-#1}$}
 \newcommand\vs[1]{\lab{m-#1} (shuffled \lab{b-#1}\,$\pm$\,\lab{sd-#1}; $z=\lab{z-#1}$)}
 % ---- labels in the maze figure
-\newcommand\lblhead[1]{\textsc{\MakeLowercase{#1}}\\}
+\newcommand\lblhead[1]{\textsc{\MakeLowercase{#1}}}
+\newcommand\lblletter[1]{\textbf{#1}}
 \tikzset{mazelabel/.style={inner sep=0pt, font=\figfont\fontsize{6.6}{7.6}\selectfont},
          shaftlabel/.style={inner sep=0.5pt, fill=white, anchor=west, font=\figfont\fontsize{6.6}{7.6}\selectfont}}
 \newcommand\labelledfigure[2]{% #1 pdf, #2 label file (positions in mm from the top-left)
@@ -54,4 +55,12 @@
 \pagestyle{headings}
 \newenvironment{finding}[1]{\par\medskip\noindent\textsc{#1.}\enspace\ignorespaces}{\par}
 \newcommand\sref[1]{\S\,#1}
+
+% the vocabulary record: the 1-bit map plus a hairline at the rim of the disc
+\newcommand\vocabdisc[2]{% #1 png, #2 width
+  \begin{tikzpicture}
+  \node[inner sep=0pt] (vd) {\includegraphics[width=#2]{#1}};
+  \draw[line width=0.2pt] (vd.center) circle ({\lab{vocab-rim}*#2});
+  \fill (vd.center) circle (0.25pt);
+  \end{tikzpicture}}
 \endinput

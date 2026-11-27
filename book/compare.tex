@@ -1,0 +1,245 @@
+% Five books, compared. Numbers from build/compare/numbers.tex (\lab{c-<slug>-...})
+\input{../build/compare/numbers.tex}
+\newcommand\cdir{../build/compare/}
+\newcommand\bk[1]{\emph{\lab{c-#1-title}}}
+\newcommand\cz[2]{\ifnum\lab{c-#1-sig-#2}=1 \textbf{\lab{c-#1-z-#2}}\else\lab{c-#1-z-#2}\fi}
+% a row of the five books: #1 file prefix, #2 width each
+\newcommand\fiverow[2]{%
+  \noindent\begin{tabular}{@{}*{5}{c}@{}}
+  \includegraphics[width=#2]{\cdir #1-the-trial.pdf} &
+  \includegraphics[width=#2]{\cdir #1-bartleby.pdf} &
+  \includegraphics[width=#2]{\cdir #1-yellow-wallpaper.pdf} &
+  \includegraphics[width=#2]{\cdir #1-heart-of-darkness.pdf} &
+  \includegraphics[width=#2]{\cdir #1-pride-and-prejudice.pdf}\\
+  \fivenames
+  \end{tabular}}
+\newcommand\fivenames{{\figfont\scriptsize\itshape The Trial} & {\figfont\scriptsize\itshape Bartleby} &
+  {\figfont\scriptsize\itshape Yellow Wallpaper} & {\figfont\scriptsize\itshape Heart of Darkness} &
+  {\figfont\scriptsize\itshape Pride and Prejudice}}
+\newcommand\stacked[2]{% #1 file prefix, #2 slug  — a full-width strip with its title
+  \noindent{\figfont\scriptsize\itshape \lab{c-#2-title}}\\[0.5mm]
+  \includegraphics[width=\textwidth]{\cdir #1-#2.pdf}\par\medskip}
+
+\chapter{Five books}
+\label{ch:compare}
+
+A single drawing says little until there is another to set beside it. This
+chapter walks four more books and lays them next to \emph{The Trial}. Each
+was chosen to answer it in some way:
+
+\begin{description}
+\item[\bk{bartleby}] (\lab{c-bartleby-year}), Herman Melville's story of a
+law-copyist who ``would prefer not to'', has often been read as Kafka before
+Kafka: an office, a quiet refusal, a man undone without anyone quite meaning it.
+\item[\bk{yellow-wallpaper}] (\lab{c-yellow-wallpaper-year}), Charlotte Perkins
+Gilman's account of a woman confined to a room for her own good, written as
+her private journal.
+\item[\bk{heart-of-darkness}] (\lab{c-heart-of-darkness-year}), Joseph Conrad's
+journey up a river, told aloud by Marlow on the deck of a boat at dusk.
+\item[\bk{pride-and-prejudice}] (\lab{c-pride-and-prejudice-year}), Jane
+Austen's comedy of manners: the contrast, a novel of drawing rooms, letters and
+marriages, where nobody is put on trial except by gossip.
+\end{description}
+
+\noindent All four are in English and in the public domain. All five are
+scored, walked and shuffled in exactly the same way.
+
+\clearpage
+\section{Five walks}
+
+\begin{center}
+\fiverow{shape}{22mm}
+
+\bigskip
+\fiverow{scale}{22mm}
+\end{center}
+
+\noindent Above, each book fills its own frame, so only the shape compares;
+below, all five are drawn at one scale, so the size of the walk shows. Length
+is the first and plainest difference. \bk{yellow-wallpaper} is a pocket of
+\lab{c-yellow-wallpaper-sentences} sentences; \bk{pride-and-prejudice} runs to
+\lab{c-pride-and-prejudice-sentences}.
+
+\begin{table}[h]
+\centering\figfont\footnotesize
+\setlength\tabcolsep{4pt}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+ & \emph{Trial} & \emph{Bartleby} & \emph{Wallpaper} & \emph{Darkness} & \emph{Pride}\\
+\midrule
+Sentences & \lab{c-the-trial-sentences} & \lab{c-bartleby-sentences} & \lab{c-yellow-wallpaper-sentences} & \lab{c-heart-of-darkness-sentences} & \lab{c-pride-and-prejudice-sentences}\\
+Words per sentence & \lab{c-the-trial-stride} & \lab{c-bartleby-stride} & \lab{c-yellow-wallpaper-stride} & \lab{c-heart-of-darkness-stride} & \lab{c-pride-and-prejudice-stride}\\
+Warm / cold / plain (\%) & \lab{c-the-trial-left}/\lab{c-the-trial-right}/\lab{c-the-trial-straight} & \lab{c-bartleby-left}/\lab{c-bartleby-right}/\lab{c-bartleby-straight} & \lab{c-yellow-wallpaper-left}/\lab{c-yellow-wallpaper-right}/\lab{c-yellow-wallpaper-straight} & \lab{c-heart-of-darkness-left}/\lab{c-heart-of-darkness-right}/\lab{c-heart-of-darkness-straight} & \lab{c-pride-and-prejudice-left}/\lab{c-pride-and-prejudice-right}/\lab{c-pride-and-prejudice-straight}\\
+Lean (left minus right turns) & \lab{c-the-trial-net} & \lab{c-bartleby-net} & \lab{c-yellow-wallpaper-net} & \lab{c-heart-of-darkness-net} & \lab{c-pride-and-prejudice-net}\\
+\quad without \emph{like} & \lab{c-the-trial-net-r} & \lab{c-bartleby-net-r} & \lab{c-yellow-wallpaper-net-r} & \lab{c-heart-of-darkness-net-r} & \lab{c-pride-and-prejudice-net-r}\\
+Moods linger ($z$, same turn twice) & \cz{the-trial}{recoil} & \cz{bartleby}{recoil} & \cz{yellow-wallpaper}{recoil} & \cz{heart-of-darkness}{recoil} & \cz{pride-and-prejudice}{recoil}\\
+Predictable turns ($z$, $H_2$) & \cz{the-trial}{entropy_h2} & \cz{bartleby}{entropy_h2} & \cz{yellow-wallpaper}{entropy_h2} & \cz{heart-of-darkness}{entropy_h2} & \cz{pride-and-prejudice}{entropy_h2}\\
+Plain runs ($z$) & \cz{the-trial}{corridor_mean} & \cz{bartleby}{corridor_mean} & \cz{yellow-wallpaper}{corridor_mean} & \cz{heart-of-darkness}{corridor_mean} & \cz{pride-and-prejudice}{corridor_mean}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent \bk{pride-and-prejudice} leans warm by a wide margin, and stays warm
+without \emph{like}. \bk{heart-of-darkness} and \bk{bartleby} lean cold, and
+colder still without it. \bk{yellow-wallpaper} leans a little warm. Of the five,
+\bk{the-trial} is the only one whose lean changes direction with that one word.
+Its quietness is so even that a comparison can tip it.
+
+The moods of \bk{pride-and-prejudice} linger even more strongly than those of
+\bk{the-trial}: its turns are the most predictable of all five books. Austen's
+chapters settle into a tone, a conversation of compliments or a scene of
+mortification, and stay there. In the three shorter books, the same tendency is
+present but not strong enough to tell from chance. They are short, and short
+walks give chance more room, so this is an absence of evidence, not evidence
+of absence.
+
+\clearpage
+\section{The vocabulary records}
+
+\begin{center}
+\vocabdisc{\cdir vocab-the-trial.png}{36mm}\hfill
+\vocabdisc{\cdir vocab-bartleby.png}{36mm}\hfill
+\vocabdisc{\cdir vocab-yellow-wallpaper.png}{36mm}\\[-1mm]
+\makebox[36mm]{\figfont\scriptsize\itshape The Trial}\hfill\makebox[36mm]{\figfont\scriptsize\itshape Bartleby}\hfill\makebox[36mm]{\figfont\scriptsize\itshape The Yellow Wallpaper}\\[2mm]
+\vocabdisc{\cdir vocab-heart-of-darkness.png}{36mm}\hspace{6mm}
+\vocabdisc{\cdir vocab-pride-and-prejudice.png}{36mm}\\[-1mm]
+\makebox[36mm]{\figfont\scriptsize\itshape Heart of Darkness}\hspace{6mm}\makebox[36mm]{\figfont\scriptsize\itshape Pride and Prejudice}
+\end{center}
+
+\noindent Each disc is the whole dictionary, \lab{vocab-words} words laid out
+like the groove of a record: the commonest word at the centre, then outward,
+ring after touching ring, to the rarest at the rim. Every word a book uses is a
+black dot. All five records have a black core, since every book needs
+\emph{the}, \emph{and} and \emph{was}, and they differ in how far the dots
+scatter towards the rim.
+
+Long books use more words simply because they are long, so the fair comparison
+is a stretch of equal length. In any 6,000 running words, \bk{heart-of-darkness}
+uses \lab{c-heart-of-darkness-types-6k} different dictionary words and
+\bk{bartleby} \lab{c-bartleby-types-6k}. \bk{pride-and-prejudice} uses
+\lab{c-pride-and-prejudice-types-6k}, \bk{yellow-wallpaper}
+\lab{c-yellow-wallpaper-types-6k}, and \bk{the-trial} only
+\lab{c-the-trial-types-6k}, the plainest of the five. Kafka (or at least this
+English Kafka) does his strangest work with the most ordinary words. Half of
+\bk{yellow-wallpaper}'s vocabulary lies within the commonest
+\lab{c-yellow-wallpaper-median}\,\% of the dictionary, the tightest core of
+all, which suits a journal written by someone forbidden to work. The rarest words
+each book reaches for are small portraits: \lab{c-heart-of-darkness-rarest}
+for Conrad; \lab{c-pride-and-prejudice-rarest} for Austen;
+\lab{c-the-trial-rarest} for Kafka's translator.
+
+\clearpage
+\section{Tree rings}
+
+\begin{center}
+\fiverow{rings}{22mm}
+\end{center}
+
+\noindent Cut through a book like a tree trunk. The first page is the centre,
+each chapter a ring whose area is its length, and each sentence a small radial
+grain, long where the sentence uses long words and short where its words are
+plain. (Books without chapters are cut into ten equal rings.) \bk{pride-and-prejudice}
+shows the fine, even growth of \lab{c-pride-and-prejudice-rings} short chapters,
+\bk{heart-of-darkness} three broad seasons. In \bk{the-trial} the arrest
+forms a broad core, but the widest band of growth is chapter~7, the lawyer,
+the manufacturer and the painter, as if the case grew fastest in the year of
+consultations. The grain is lightest in \bk{yellow-wallpaper}, whose words
+average \lab{c-yellow-wallpaper-wordlen} letters, against
+\lab{c-pride-and-prejudice-wordlen} in \bk{pride-and-prejudice}.
+
+\clearpage
+\section{The loom}
+
+\begin{center}
+\fiverow{loom}{22mm}
+\end{center}
+
+\noindent Here the cast is woven. Each column is a warp thread for one of the
+names a book uses most, people and places, in the order they first appear.
+The book runs down the page, and a black stitch marks every stretch in which a
+name occurs.
+
+In \bk{the-trial} the first thread is a solid black column: K. is named in
+every stretch of the book. Everyone else comes and goes: the warders
+\lab{c-the-trial-pair}, whose stitches run together, then Leni, Titorelli and
+Block, each in their own episode. \bk{pride-and-prejudice} is the most woven
+cloth: Elizabeth is present in \lab{c-pride-and-prejudice-lead-share}\,\% of the
+book, and Jane is stitched alongside her more than any other pair. In
+\bk{heart-of-darkness} the most constant name is Kurtz, and he is present in only
+\lab{c-heart-of-darkness-lead-share}\,\% of the book. The novel is organised
+around a man who is mostly absent, talked about before he is met. In
+\bk{yellow-wallpaper} there is almost no cloth at all, two names
+(\lab{c-yellow-wallpaper-cast}) in a narrow strip. The narrator is alone with
+the paper.
+
+\noindent{\figfont\scriptsize Columns, left to right. \emph{Trial}: \lab{c-the-trial-cast}.
+\emph{Bartleby}: \lab{c-bartleby-cast}. \emph{Wallpaper}: \lab{c-yellow-wallpaper-cast}.
+\emph{Darkness}: \lab{c-heart-of-darkness-cast}. \emph{Pride}: \lab{c-pride-and-prejudice-cast}.}
+
+\clearpage
+\section{Echoes}
+
+\stacked{echo}{the-trial}
+\stacked{echo}{bartleby}
+\stacked{echo}{yellow-wallpaper}
+\stacked{echo}{heart-of-darkness}
+\stacked{echo}{pride-and-prejudice}
+
+\noindent Every word that recurs, other than the commonest words and names, is
+drawn as a single arch over the length of the book, spanning its longest
+absence: from the place the book last used it to the place where it comes back.
+A low arch is a word the book never forgets for long; a high arch is a word
+that disappears and returns from far away. The longest absences are telling. In
+\bk{yellow-wallpaper} they belong to \lab{c-yellow-wallpaper-echo-longest}:
+the paper itself and the light that moves on it. In \bk{heart-of-darkness},
+\emph{horror} is among the words that vanish longest before they return, as it
+does at the end. \bk{pride-and-prejudice} lets its words return soonest. Of all
+the returns of its words, only \lab{c-pride-and-prejudice-echo-far}\,\% come
+after more than a quarter of the book: its world renews its vocabulary as it
+goes, from ball to letter to visit.
+
+\clearpage
+\section{Tides of speech}
+
+\stacked{tide}{the-trial}
+\stacked{tide}{bartleby}
+\stacked{tide}{yellow-wallpaper}
+\stacked{tide}{heart-of-darkness}
+\stacked{tide}{pride-and-prejudice}
+
+\noindent The black tide is the share of words spoken inside quotation marks,
+read through each book from left to right and folded into three rows. Two
+books are almost all one thing. \bk{heart-of-darkness} is a flood
+(\lab{c-heart-of-darkness-speech}\,\% of its words are inside quotation marks)
+because almost the whole novel is Marlow's voice, spoken aloud on the deck of
+the Nellie. The few dry stretches are the unnamed listener who frames him.
+\bk{yellow-wallpaper} is nearly dry (\lab{c-yellow-wallpaper-speech}\,\%): a
+journal, kept in secret, where other people's voices are only remembered.
+Between them, \bk{pride-and-prejudice} is half conversation
+(\lab{c-pride-and-prejudice-speech}\,\%), and \bk{the-trial}
+(\lab{c-the-trial-speech}\,\%) alternates long talking scenes with stretches
+of narrative silence: the longest runs \lab{c-the-trial-silence} words without a
+spoken word.
+
+\clearpage
+\section{Five portraits}
+
+Put together, the instruments give each book a face.
+
+\bk{the-trial} walks evenly, in quiet moods that linger, with the plainest
+vocabulary of the five, around one man who is never absent. Its tangles sit in
+the rooms where he looks for answers.
+
+\bk{bartleby} is short and cool, and leans cold. Its cast is the office:
+Turkey and Nippers, stitched together, and Bartleby himself. Its vocabulary is
+rich for its length; a lawyer narrates it.
+
+\bk{yellow-wallpaper} is the smallest walk, with the plainest words, almost no
+other voices and almost no cast, and its longest echoes are the yellow paper
+and the moonlight.
+
+\bk{heart-of-darkness} is one long spoken voice, leaning cold, with the
+richest vocabulary of the five, organised around a man who is mostly not there.
+
+\bk{pride-and-prejudice} is the largest walk and the warmest, a densely woven
+cloth of names around Elizabeth, half spoken, with moods that settle and stay.

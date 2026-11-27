@@ -45,7 +45,8 @@ def stats(p, chapter_starts):
 
 def main(cfg_path, views=("plan", "shaft", "stand", "high"), W=2000, H=1333):
     cfg = yaml.safe_load(open(cfg_path))
-    book = text.load(cfg["gutenberg"], cfg["title"], cfg["author"], cfg.get("translator", ""))
+    from .build import load_book
+    book = load_book(cfg)
     out = os.path.join(ROOT, "build", cfg["slug"], "variants")
     os.makedirs(out, exist_ok=True)
     N = Numbers()

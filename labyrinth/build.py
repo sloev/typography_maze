@@ -66,12 +66,31 @@ def quote(sentence, maxw=28):
     return tex_escape(s).replace("“", "‘").replace("”", "’")
 
 
+def cached_baseline(out, tag, n, t, sc, shuffles, seed):
+    """The shuffle baseline, cached on disk; recomputed only when the sentences' lengths,
+    turns or the shuffle settings change."""
+    import hashlib
+    h = hashlib.sha1(np.asarray(n).tobytes() + np.asarray(t).tobytes() + f"{shuffles}:{seed}".encode()).hexdigest()[:16]
+    path = os.path.join(out, f"baseline-{tag}-{h}.npz")
+    if os.path.exists(path):
+        d = np.load(path)
+        return {k: d[k] for k in d.files}
+    base = A.shuffle_baseline(n, t, sc, n=shuffles, seed=seed)
+    np.savez(path, **base)
+    return base
+
+
+def load_book(cfg):
+    kw = {k: cfg[k] for k in ("chapter_pattern", "skip_until", "first_chapter", "stop_at") if k in cfg}
+    return text.load(cfg["gutenberg"], cfg["title"], cfg["author"], cfg.get("translator", ""), **kw)
+
+
 def main(cfg_path):
     cfg = yaml.safe_load(open(cfg_path))
     slug = cfg["slug"]
     out = os.path.join(ROOT, "build", slug)
     os.makedirs(out, exist_ok=True)
-    book = text.load(cfg["gutenberg"], cfg["title"], cfg["author"], cfg.get("translator", ""))
+    book = load_book(cfg)
     S = book.sentences
     n = np.array([len(s.words) for s in S])
     names = sentiment.book_names([s.text for s in S])
@@ -91,7 +110,7 @@ def main(cfg_path):
         t_r = np.array([sentiment.turn(x, cfg.get("dead_zone", 0)) for x in sc_r])
         w_r = walk.walk2d(n, t_r, sc_r)
         m_r = A.global_measures(w_r)
-        z_r = A.zscores(m_r, A.shuffle_baseline(n, t_r, sc_r, n=cfg.get("shuffles", 200), seed=cfg.get("seed", 7) + 1))
+        z_r = A.zscores(m_r, cached_baseline(out, "r", n, t_r, sc_r, cfg.get("shuffles", 200), cfg.get("seed", 7) + 1))
         N["r-words"] = ", ".join(f"\\emph{{{d}}}" for d in drop)
         N["r-handedness"] = fmt(m_r["handedness"], 2)
         N["r-net"] = fmt(int(t_r.sum())); N["net"] = fmt(int(t.sum()))
@@ -106,7 +125,7 @@ def main(cfg_path):
 
     # ---- global measures + shuffle baseline
     m = A.global_measures(w)
-    base = A.shuffle_baseline(n, t, sc, n=cfg.get("shuffles", 200), seed=cfg.get("seed", 7))
+    base = cached_baseline(out, "m", n, t, sc, cfg.get("shuffles", 200), cfg.get("seed", 7))
     z = A.zscores(m, base)
     for k, v in m.items():
         N[f"m-{k}"] = fmt(v, 3 if abs(v) < 1 else 2)
@@ -116,6 +135,8 @@ def main(cfg_path):
         N[f"b-{k}"] = fmt(v["mean"], 3 if abs(v["mean"]) < 1 else 2)
         N[f"sd-{k}"] = fmt(v["sd"], 3 if abs(v["sd"]) < 1 else 2)
         N[f"p-{k}"] = ("<0.005" if v["p"] < 0.005 else fmt(v["p"], 3))
+        nshuf = cfg.get("shuffles", 200)
+        N[f"nex-{k}"] = str(int(round(v["p"] * (nshuf + 1) - 1)))   # shuffles at least as extreme as the book
         hist, edges = np.histogram(base[k], bins=24)
         with open(os.path.join(out, f"baseline-{k}.dat"), "w") as f:
             f.write("x y\n")
@@ -137,6 +158,13 @@ def main(cfg_path):
             exp = (t == a).sum() * (t == b).sum() / len(t) * (len(t) - 1) / len(t)
             N[f"tr-{lab[a]}{lab[b]}"] = fmt(obs); N[f"te-{lab[a]}{lab[b]}"] = fmt(exp, 0)
             N[f"tq-{lab[a]}{lab[b]}"] = fmt(obs / exp, 2)
+    # plain language: after a sentence of kind a, how often is the next of the same kind (vs its overall share)
+    for a in (-1, 0, 1):
+        row = sum(1 for p in pairs if p[0] == a)
+        same = sum(1 for p in pairs if p == (a, a))
+        N[f"pp-{lab[a]}"] = fmt(100 * same / row, 0)
+        N[f"base-{lab[a]}"] = fmt(100 * (t == a).mean(), 0)
+        N[f"tqpct-{lab[a]}"] = fmt(100 * (same / row / (t == a).mean() - 1), 0)
 
     # ---- gyration curve with baseline band
     tt, rg = A.gyration_curve(w, 100)
@@ -170,6 +198,11 @@ def main(cfg_path):
     Jo = J.copy(); np.fill_diagonal(Jo, 0)
     ci, cj = np.unravel_index(Jo.argmax(), Jo.shape)
     N["share-ch-a"] = str(ci + 1); N["share-ch-b"] = str(cj + 1); N["share-ch-j"] = fmt(100 * Jo.max(), 1)
+    inv = np.zeros(len(S))
+    for _, _, i, j in cr:
+        inv[i] += 1; inv[j] += 1
+    for c in range(len(book.chapters)):      # crossings per sentence, chapter by chapter
+        N[f"chx-{c + 1}"] = fmt(float(inv[chap == c].mean()), 2)
     gaps = cr[:, 3] - cr[:, 2]
     N["cross-long-pct"] = fmt(100 * (gaps > len(S) / 4).mean(), 0)
     N["cross-short-pct"] = fmt(100 * (gaps <= 50).mean(), 0)
@@ -213,42 +246,64 @@ def main(cfg_path):
         N["pal-n"] = fmt(len(ov))
     N["first-quote"] = quote(S[0].text, 40); N["last-quote"] = quote(S[-1].text, 40)
 
-    # ---- the maze page, labelled
+    # ---- the maze page: short lettered labels in the margins whose arrows stop before
+    #      the drawing; each letter has a magnified cut-out on a separate page
     v = w.vertices()
 
     def mid(a, b):
         return (v[a] + v[b + 1]) / 2
-    anchors = [
-        dict(x=v[0][0], y=v[0][1], key="start", lines=2, text=f"\\lblhead{{Start}} {sref(0)}"),
-        dict(x=v[-1][0], y=v[-1][1], key="end", lines=2, text=f"\\lblhead{{End}} {sref(len(S) - 1)}"),
-    ]
+
+    def focus_window(ids, rmin=8.0, rmax=15.0):
+        """Centre and radius of a cut-out: the point of the feature's own path nearest
+        its centroid (never empty space), wide enough to show it, narrow enough to read."""
+        pts = np.vstack([v[i] for i in ids] + [v[i + 1] for i in ids]).astype(float)
+        c = pts.mean(0)
+        best = pts[np.argmin(((pts - c) ** 2).sum(1))]
+        half = (pts.max(0) - pts.min(0)).max() / 2 + 2
+        return float(best[0]), float(best[1]), float(np.clip(half, rmin, rmax))
+
+    def chs(ids):
+        c = sorted(set(int(chap[i]) + 1 for i in ids))
+        return ("chapter " if len(c) == 1 else "chapters ") + ", ".join(map(str, c))
+    feats = []          # (name, x, y, focus sentences, caption)
     for k, q in enumerate(kn[:2]):
-        key = "AB"[k]
-        anchors.append(dict(x=q["x"], y=q["y"], key=f"knot{key}", lines=3,
-                            text=f"\\lblhead{{Knot {'I' * (k + 1)}}} {fmt(q['crossings'])} crossings, "
-                                 f"chapters {q['chapters'][0]}–{q['chapters'][-1]}"))
+        feats.append((f"Knot {'I' * (k + 1)}", q["x"], q["y"], q["sentences"],
+                      f"{fmt(q['crossings'])} crossings among {len(q['sentences'])} sentences from {chs(q['sentences'])}."))
     hx, hy = mid(hb["i"], hb["i"])
-    anchors.append(dict(x=hx, y=hy, key="hub", lines=3,
-                        text=f"\\lblhead{{Hub}} {sref(hb['i'])}, crossed {hb['crossings']} times"))
-    anchors.append(dict(x=rt["x"], y=rt["y"], key="return", lines=3,
-                        text=f"\\lblhead{{Return}} {sref(rt['i'])} meets {sref(rt['j'])}, "
-                             f"{fmt(rt['gap'])} sentences apart"))
+    feats.append(("Hub", hx, hy, [hb["i"]],
+                  f"{sref(hb['i'])}, crossed by {hb['crossings']} other sentences."))
+    feats.append(("Return", rt["x"], rt["y"], [rt["i"], rt["j"]],
+                  f"{sref(rt['i'])} crosses {sref(rt['j'])}, {fmt(rt['gap'])} sentences later."))
     cx_, cy_ = mid(co["first"], co["last"])
-    anchors.append(dict(x=cx_, y=cy_, key="coil", lines=3,
-                        text=f"\\lblhead{{Coil}} {abs(co['quarter_turns'])} quarter turns {N_dir(co)} in 12 sentences"))
+    feats.append(("Coil", cx_, cy_, list(range(co["first"], co["last"] + 1)),
+                  f"{sref(co['first'])}–{co['last'] + 1}: {abs(co['quarter_turns'])} quarter turns "
+                  f"{N_dir(co)} in twelve sentences."))
     dx_, dy_ = mid(dk["first"], dk["last"])
-    anchors.append(dict(x=dx_, y=dy_, key="dark", lines=3,
-                        text=f"\\lblhead{{Darkest}} {sref(dk['first'])}–{dk['last'] + 1}, AFINN {fmt(dk['score'], 0)}"))
+    feats.append(("Darkest", dx_, dy_, list(range(dk["first"], dk["last"] + 1)),
+                  f"{sref(dk['first'])}–{dk['last'] + 1}: the thirty coldest sentences in a row."))
     kx, ky = mid(cor["first"], cor["last"])
-    anchors.append(dict(x=kx, y=ky, key="corridor", lines=3,
-                        text=f"\\lblhead{{Corridor}} {cor['sentences']} neutral sentences, {fmt(cor['words'])} words"))
+    feats.append(("Corridor", kx, ky, list(range(cor["first"], cor["last"] + 1)),
+                  f"{sref(cor['first'])}–{cor['last'] + 1}: {cor['sentences']} plain sentences, "
+                  f"{fmt(cor['words'])} words in a straight line."))
     if pal is not None:
-        anchors.append(dict(x=(pal[3] + pal[5]) / 2, y=(pal[4] + pal[6]) / 2, key="palimpsest", lines=3,
-                            text=f"\\lblhead{{Palimpsest}} {sref(pal[0])} under {sref(pal[1])}, {int(pal[2])} words"))
-    band = cfg.get("label_band_mm", 30)
+        feats.append(("Palimpsest", (pal[3] + pal[5]) / 2, (pal[4] + pal[6]) / 2, [int(pal[0]), int(pal[1])],
+                      f"{sref(pal[1])} drawn over {sref(pal[0])} for {int(pal[2])} words."))
+    windows = []
+    for name, x, y, focus, cap in feats:
+        if name.startswith(("Coil", "Darkest", "Corridor", "Palimpsest")):
+            windows.append(focus_window(focus))
+        else:
+            windows.append((float(x), float(y), cfg.get("cutout_radius", 9.0)))
+    letters_ = "ABCDEFGHIJ"
+    anchors = [dict(x=v[0][0], y=v[0][1], key="start", lines=1, text="\\lblhead{Start}"),
+               dict(x=v[-1][0], y=v[-1][1], key="end", lines=1, text="\\lblhead{End}")]
+    for k, (name, x, y, _, _) in enumerate(feats):
+        anchors.append(dict(x=x, y=y, key=letters_[k], lines=1,
+                            text=f"\\lblletter{{{letters_[k]}}}\\,{name}"))
+    band = cfg.get("label_band_mm", 22)
     labels = []
     draw.draw_maze(w, os.path.join(out, "maze.pdf"), TEXT_W, MAZE_H, band=band, anchors=anchors,
-                   labels_out=labels, label_h=3.0, chapter_starts=book.chapter_starts)
+                   labels_out=labels, label_h=3.0)
     with open(os.path.join(out, "maze-labels.tex"), "w") as f:
         f.write("% generated: label positions in mm from the top-left of maze.pdf\n")
         for a in labels:
@@ -257,6 +312,21 @@ def main(cfg_path):
             al = "right" if a["side"] == "L" else "left"
             f.write(f"\\node[mazelabel,anchor={anc},align={al},text width={band - 2.5:.1f}mm] "
                     f"at ({x:.2f}mm,{-a['top']:.2f}mm) {{{a['text']}}};\n")
+    # cut-outs: four to a page, each a magnified window with the sentences written along the path
+    texts = [s_.text for s_ in S]
+    CW, CH = 56.0, 60.0
+    with open(os.path.join(out, "cutouts.tex"), "w") as f:
+        f.write("% generated: magnified cut-outs of the labelled places\n")
+        for k, (name, x, y, focus, cap) in enumerate(feats):
+            L_ = letters_[k]
+            wx, wy, wr = windows[k]
+            draw.draw_cutout(w, texts, os.path.join(out, f"cut-{L_}.pdf"), CW, CH, wx, wy, wr, focus=focus)
+            if k and k % 4 == 0:
+                f.write("\\clearpage\n")
+            f.write(f"\\begin{{minipage}}[t]{{{CW}mm}}\\includegraphics{{cut-{L_}.pdf}}\\par\\smallskip"
+                    f"{{\\figfont\\footnotesize\\lblletter{{{L_}}}\\,\\textsc{{\\MakeLowercase{{{name}}}}}. {cap}}}"
+                    f"\\end{{minipage}}")
+            f.write("\\hfill\n" if k % 2 == 0 else "\\par\\vspace{5mm}\n")
 
     # ---- zoom on the knots: chapters told apart by dash pattern
     styles_order = [None, [1.2, 0.6], [0.25, 0.5]]

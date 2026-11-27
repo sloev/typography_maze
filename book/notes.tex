@@ -1,0 +1,122 @@
+% Notes and numbers: the figures behind the essays (The Trial).
+\newcommand\zcell[1]{\ifnum\lab{sig-#1}=1 \textbf{\lab{z-#1}}\else\lab{z-#1}\fi}
+\newcommand\rzcell[1]{\ifnum\lab{rsig-#1}=1 \textbf{\lab{rz-#1}}\else\lab{rz-#1}\fi}
+\newcommand\vrow[2]{#2 & \lab{m-#1} & \lab{b-#1} $\pm$ \lab{sd-#1} & \zcell{#1} & \rzcell{#1}\\}
+\newcommand\stripz[2]{%
+  \begin{tikzpicture}
+  \begin{axis}[width=40mm, height=21mm, ymin=0, axis y line=none,
+      xmin=\lab{bmin-#1}, xmax=\lab{bmax-#1}, enlarge x limits=0.06, xtick=\empty,
+      title={#2}, title style={font=\figfont\scriptsize, yshift=-1.5mm}, clip=false]
+    \addplot[const plot mark mid, black, line width=0.4pt] table {../build/the-trial/baseline-#1.dat};
+    \draw[line width=1.1pt] (axis cs:\lab{raw-#1},0) -- (axis cs:\lab{raw-#1},\pgfkeysvalueof{/pgfplots/ymax});
+    \node[anchor=north, font=\figfont\scriptsize] at (axis cs:\lab{raw-#1},0) {$z=\lab{z-#1}$};
+  \end{axis}
+  \end{tikzpicture}}
+
+\chapter{Notes and numbers}
+\label{ch:notes}
+
+These notes give the figures behind the essays, for readers who want to check
+them. Everything here is produced by the program that draws the book, in the
+repository that accompanies it.
+
+\section{Scoring}
+A sentence's score is the sum of the AFINN-165 scores of its words (F.\,Å.
+Nielsen, 2011). Its turn is left for a positive sum, right for a negative one,
+and straight for zero. A lexicon word is not scored when it is capitalised and
+does not begin a sentence or a quotation, or when the book uses it that way in
+at least half of its occurrences (at least three times). For \emph{The Trial}
+this excludes \lab{names}.
+
+Sentences are split at \texttt{. ! ?} before a capital, a digit or an opening
+quotation mark, and at every paragraph break, but not after initials
+(``Josef~K.'') or honorifics (Mr., Mrs.). Chapter headings and subtitles are
+not drawn.
+
+\section{Shuffles}
+Each order-dependent measure is computed for the book and for \lab{shuffles}
+random orderings of the same sentences. $z$ is the book's distance from the
+shuffles' mean in standard deviations. The essays call a pattern a property of
+the book only when $|z|\ge3$ (bold). With twelve measures per book, this keeps
+the chance of a single false alarm per book at about 3\,\%. The last column
+repeats every test with \lab{r-words} left unscored.
+
+\begin{table}[h]
+\centering\figfont\small
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+ & \emph{Trial} & shuffled & $z$ & w/o \lab{r-words}\\
+\midrule
+\vrow{recoil}{Same turn twice (share)}
+\vrow{vacillation}{Opposite turns (share)}
+\vrow{entropy_h2}{Turn entropy $H_2$ (bits)}
+\vrow{corridor_mean}{Mean plain run}
+\vrow{corridor_max}{Longest plain run}
+\vrow{drift}{Drift}
+\vrow{gyration_final}{Spread (gyration)}
+\vrow{sprawl}{Sprawl}
+\vrow{texture}{Texture (dimension)}
+\vrow{crossing_rate}{Crossings / sentence}
+\vrow{crossing_gap_median}{Median crossing gap}
+\vrow{palimpsest_words}{Overwritten words}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\stripz{recoil}{Same turn twice}\hfill\stripz{vacillation}{Opposite turns}\hfill\stripz{entropy_h2}{Turn entropy $H_2$}\\[1mm]
+\stripz{corridor_mean}{Mean plain run}\hfill\stripz{corridor_max}{Longest plain run}\hfill\stripz{drift}{Drift}\\[1mm]
+\stripz{gyration_final}{Spread}\hfill\stripz{sprawl}{Sprawl}\hfill\stripz{texture}{Texture}\\[1mm]
+\stripz{crossing_rate}{Crossings / sentence}\hfill\stripz{crossing_gap_median}{Median crossing gap}\hfill\stripz{palimpsest_words}{Overwritten words}
+
+\section{Consecutive sentences}
+Pairs of consecutive sentences, by turn of the first (rows) and the second
+(columns), against the number expected if order did not matter
+(observed\,/\,expected):
+
+\begin{center}\figfont\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+ & left & straight & right\\
+\midrule
+left & \lab{tr-LL} / \lab{te-LL} & \lab{tr-LS} / \lab{te-LS} & \lab{tr-LR} / \lab{te-LR}\\
+straight & \lab{tr-SL} / \lab{te-SL} & \lab{tr-SS} / \lab{te-SS} & \lab{tr-SR} / \lab{te-SR}\\
+right & \lab{tr-RL} / \lab{te-RL} & \lab{tr-RS} / \lab{te-RS} & \lab{tr-RR} / \lab{te-RR}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Spread over time}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[width=105mm, height=48mm, xmin=0, xmax=1, ymin=0, xlabel={position in the book}, ylabel={spread (words)},
+  label style={font=\figfont\scriptsize}, legend style={draw=none, font=\figfont\scriptsize, at={(0.02,0.98)}, anchor=north west}]
+  \addplot[name path=hi, draw=none, forget plot] table[x=t,y=hi] {../build/the-trial/gyration.dat};
+  \addplot[name path=lo, draw=none, forget plot] table[x=t,y=lo] {../build/the-trial/gyration.dat};
+  \addplot[pattern=north east lines, draw=none] fill between[of=hi and lo];
+  \addlegendentry{shuffled, 5--95\,\%}
+  \addplot[black, dashed, line width=0.4pt] table[x=t,y=mid] {../build/the-trial/gyration.dat};
+  \addlegendentry{shuffled, median}
+  \addplot[black, line width=1pt] table[x=t,y=rg] {../build/the-trial/gyration.dat};
+  \addlegendentry{\emph{The Trial}}
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\noindent The radius of gyration (how far, on average, the path lies from its
+centre) as the book is read. It stays within the shuffled band for all but
+\lab{rg-above-pct}\,\% of the book.
+
+\section{Definitions}
+\begin{description}\small
+\item[Knot] the 24\,$\times$\,24-word cell (smoothed over its neighbours) with
+the most crossings. A crossing is two strokes that are not neighbours in the
+text cutting through each other.
+\item[Hub] the sentence crossed by the most others.
+\item[Return] the crossing between the two sentences farthest apart in the book.
+\item[Coil] the twelve consecutive sentences with the largest net turning.
+\item[Corridor] the longest run of plain (unscored) sentences, by words.
+\item[Darkest passage] the thirty consecutive sentences with the lowest total score.
+\item[Palimpsest] the longest stretch where a later stroke lies exactly on an
+earlier one.
+\item[Mineshaft] the same walk in three dimensions, tilting \lab{shaft-delta}\textdegree{}
+up for each left turn and down for each right turn.
+\end{description}

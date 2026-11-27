@@ -8,3 +8,4 @@ book/*.fls
 book/*.fdb_latexmk
 book/*.out
 book/*.toc
+build-*.log

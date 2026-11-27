@@ -1,0 +1,10 @@
+slug: yellow-wallpaper
+gutenberg: 1952
+title: The Yellow Wallpaper
+author: Charlotte Perkins Gilman
+year: 1892
+chapter_pattern: null      # one continuous text
+skip_until: "^It is very seldom"
+shuffles: 200
+seed: 7
+robustness_drop: [like]

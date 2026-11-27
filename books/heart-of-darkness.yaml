@@ -1,0 +1,9 @@
+slug: heart-of-darkness
+gutenberg: 219
+title: Heart of Darkness
+author: Joseph Conrad
+year: 1899
+chapter_pattern: "^(I|II|III)$"
+shuffles: 200
+seed: 7
+robustness_drop: [like]

@@ -46,7 +46,8 @@ And here is an excerpt showing that the lines actually are text:
 `labyrinth/` turns a Project Gutenberg text into the analysis and figures for the book, and `book/` typesets them with LuaLaTeX on A5.
 
 ```
-pip install numpy shapely pycairo pyyaml
+pip install numpy shapely pycairo pyyaml numba pillow wordfreq
+apt-get install wamerican   # the dictionary for the vocabulary record
 make            # = python3 -m labyrinth.build + labyrinth.experiments for each books/*.yaml, then latexmk in book/
 ```
 
@@ -61,6 +62,9 @@ make            # = python3 -m labyrinth.build + labyrinth.experiments for each 
 | `labyrinth/variants.py` | Turning-rule variations: quarter (90°), graded (VADER-normalised sentence valence × 90°), rolling (per word, running mean of the last 12 words) |
 | `labyrinth/letters.py` | Standing letters for any path geometry, screened to 1-bit |
 | `labyrinth/experiments.py` | Every rule from every view (plan, mineshaft, letters at eye level and from above) → `build/<slug>/variants/` |
+| `labyrinth/vocab.py` | The vocabulary record: the dictionary (system word list, ranked by `wordfreq` commonness) as a spiral disc, common words at the centre; a book's words are black pixels |
+| `labyrinth/instruments.py` | Tree rings (chapters as rings, word length as grain), the loom (the cast as woven cloth), echoes (each word's longest absence as an arch), the tide (speech inside quotation marks) |
+| `labyrinth/compare.py` | All books side by side: drawings, records, rings, looms, echoes, tides and the numbers → `build/compare/` |
 | `book/` | `main.tex`, `methods.tex` (definitions and the test), `trial.tex` (The Trial), `labyrinth.sty` (A5 page design) |
 
 `book/main.pdf` is the current specimen.

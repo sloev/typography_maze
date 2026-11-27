@@ -18,64 +18,46 @@
   \includegraphics[width=\textwidth]{\vgraphics#1-high.png}\\[1mm]
   {\figfont\scriptsize The same junction from above and behind.}}
 
-\chapter{Variations}
+\chapter{Other ways to walk}
 \label{ch:variations}
 
-The book's rule turns every sentence by a full right angle, whatever its
-strength. Two other rules use the same scores differently. All three are
-drawn here for \emph{The Trial}, from every viewpoint the book uses. Names are
-excluded as in the method chapter; \emph{like} is scored.
+The rule used so far is deliberately crude: every feeling, mild or violent,
+turns the walker by the same right angle. There are gentler ways to walk a
+book, and each shows something different. Here \emph{The Trial} is walked in
+three ways, and each walk is seen from above, as a shaft from the side, and on
+the ground among its own letters.
 
 \begin{description}
-\item[Quarter] the book's rule: $\pm90$\textdegree{} or straight, one stroke per sentence.
-\item[Graded] one stroke per sentence, turning by $90\text{\textdegree}\times v$,
-where $v=S/\sqrt{S^2+15}$ is the sentence's AFINN sum $S$ squashed into $(-1,1)$
-(the normalisation of the VADER sentiment model). A sentence at $v=0.1$ barely
-bends; one at $v=0.9$ turns nearly a right angle.
-\item[Rolling] one stroke per \emph{word}, one unit long. At every word the
-heading bends by \lab{gain}\textdegree{} times the mean valence ($a(w)/5$) of
-the last \lab{window} words. The path curves through a passage as it reads,
-instead of kinking where sentences end.
+\item[Quarter turns] the rule of the previous chapter. Every sentence is a
+straight line, and every change of mood a right angle.
+\item[Graded turns] each sentence turns by how strongly it feels. A faintly
+cold sentence leans a little to the right; a bitter one turns almost a right
+angle. (A sentence's total score is softened into the range from $-1$ to $+1$
+the way the VADER sentiment model does it, then multiplied by
+90\textdegree.)
+\item[Rolling turns] the walker turns not at the end of sentences but at every
+word, by the mood of the last \lab{window} words. A plain stretch runs
+straight; a passage of feeling bends into a curve as it is read.
 \end{description}
 
-\noindent In every rule the mineshaft tilts \lab{delta}\textdegree{} up for each
-90\textdegree{} turned left and down for each 90\textdegree{} turned right.
+\noindent The three walks agree that this translation of \emph{The Trial} leans
+slightly warm when every word is scored, and they differ in how much. Counting
+sentences, a mild sentence weighs as much as a violent one; weighing them by
+strength, or counting words, softens the lean
+(\lab{quarter-net_turns}, \lab{graded-net_turns} and
+\lab{rolling-net_turns} full turns to the left). All three inherit the problem
+of \emph{like}.
 
-\begin{table}[h]
-\centering\figfont\small
-\begin{tabular}{@{}lrrr@{}}
-\toprule
- & quarter & graded & rolling\\
-\midrule
-Strokes & \lab{quarter-strokes} & \lab{graded-strokes} & \lab{rolling-strokes}\\
-Mean turn per stroke (\textdegree) & \lab{quarter-mean_turn} & \lab{graded-mean_turn} & \lab{rolling-mean_turn}\\
-Net rotation (full turns) & \lab{quarter-net_turns} & \lab{graded-net_turns} & \lab{rolling-net_turns}\\
-Drift & \lab{quarter-drift} & \lab{graded-drift} & \lab{rolling-drift}\\
-Final tilt of the shaft (\textdegree) & \lab{quarter-final_pitch} & \lab{graded-final_pitch} & \lab{rolling-final_pitch}\\
-\bottomrule
-\end{tabular}
-\end{table}
+\variationspread{quarter}{Quarter turns}{Seen from above, the quarter-turn walk
+is a maze of right angles. On the ground, at the place where most sentences
+meet, they cross at right angles and their letters pass through one another.}
 
-\noindent The three rules agree on the sign of \emph{The Trial}'s lean, but not
-its size. The quarter rule counts sentences, so a mild sentence weighs as much
-as a violent one. The graded rule weighs them by strength. The rolling rule
-counts words, so a long sentence weighs more than a short one. All three
-inherit the same lexicon, and with it the problem of \emph{like}
-(p.~\pageref{sec:like}).
+\variationspread{graded}{Graded turns}{Weighed by strength, the maze becomes a
+coastline. Mild sentences bend the path a little, and strong ones fold it.
+Each sentence is still a straight line, but neighbouring sentences now meet at
+their own angles, so on the ground the sentences fan out like spokes.}
 
-\variationspread{quarter}{Quarter turns}{The book's own rule, for comparison.
-Every sentence is a straight stroke and every corner a right angle, so the
-drawing is a grid maze. Standing at the junction, sentences meet at right
-angles, and their letters pass through each other.}
-
-\variationspread{graded}{Graded turns}{Turning by strength makes the drawing
-organic: mild sentences bend the path slightly, strong ones fold it. The
-corners of the quarter maze become a coastline. Standing at the junction,
-each sentence is still straight, but consecutive sentences meet at their own
-angles.}
-
-\variationspread{rolling}{Rolling turns}{Turning word by word removes the
-corners altogether. A neutral stretch runs straight, and a passage of feeling
-bends into a curve whose tightness is the strength of the feeling. Standing on
-the ground, the words of a sentence follow the curve, so a sentence reads
-along an arc.}
+\variationspread{rolling}{Rolling turns}{Walked word by word, the drawing loses
+its corners altogether. A plain stretch runs straight, and a passage of
+feeling bends into a curve as tight as the feeling is strong. On the ground,
+the words of a sentence follow the curve, and a sentence reads along an arc.}

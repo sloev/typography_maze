@@ -1,0 +1,10 @@
+slug: bartleby
+gutenberg: 11231
+title: Bartleby, the Scrivener
+author: Herman Melville
+year: 1853
+chapter_pattern: null
+skip_until: "^I am a rather elderly man"
+shuffles: 200
+seed: 7
+robustness_drop: [like]
