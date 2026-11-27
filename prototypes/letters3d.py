@@ -131,7 +131,7 @@ DH=np.where(KND==2,np.maximum(DEP-25.0,0.0),DEP)   # letters stay solid black fo
 Tr=np.exp(-np.where(KND==0,1e9,DH)/HAZE); col=col*Tr+0.96*(1-Tr)
 img=np.clip(col,0,1)
 # --- 1-bit: the same screening as the sister project (stochastic clustered dots, 1200 dpi, placed size)
-sys.path.insert(0,'os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","tools")')
+sys.path.insert(0,os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','tools'))
 import halftone
 tone=out.replace('.png','_tone.png')
 Image.fromarray((np.clip(img,0,1)*255).astype(np.uint8)).save(tone)
