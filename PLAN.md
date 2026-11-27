@@ -172,54 +172,63 @@ Prototype numbers (`prototypes/crossings.py`):
 
 ---
 
-## 3b. Ground view: standing inside the maze
+## 3b. Ground view: walking the pathways
 
 A second kind of image, used where the 2D drawing becomes too dense to read
 (the tangles from §2.4) and at the book's key anchors.
 
-**Model**
-- Every stroke is a **wall of infinite height** with zero thickness.
-- The **floor** carries the sentence that made the wall, written along the wall's
-  base on both faces, reading in the direction of travel.
-- Where sentences overlap (palimpsest), their lines of text stack outward
-  from the wall in sentence order, so the overwrite becomes visible.
-- Since the walls are infinitely tall there is no sky, and occlusion is
-  **purely 2D**. What's visible from a point is exactly the 2D visibility
-  polygon. That makes the rendering exact and cheap.
+![ground view prototype](prototypes/ground_view_trial.png)
 
-**Rendering (vector, 1-bit)**
-- The floor maps to the image by a homography. Glyph outlines (from the font,
-  via fontTools) are transformed exactly, so the text stays vector and sharp
-  even close to the camera.
-- Glyphs whose features drop below the minimum printable size (0.1 pt) are
-  culled. The text fades out into the distance on its own, with no grey.
-- Walls are white planes. Their visible faces get vertical hatching whose
-  spacing encodes the wall's sentence (sentiment strength, or the wall's
-  direction), with black rules at wall ends and at the floor line. Vertical
-  edges stay vertical because the camera is level.
-- **Formats**: a single perspective view (one page); a 360° cylindrical panorama
-  across a spread (the infinite walls make the panorama seamless); and a
-  "walk" sequence of 4–6 frames along a corridor.
+**Model**
+- **The text is the pathway.** Every sentence stroke is a corridor one word
+  long per unit of length. Its words are written on the floor one after
+  another, set across the corridor like road markings: upright as you walk
+  forward, and slightly stretched along the walking direction to offset
+  foreshortening.
+- **Tall walls line both sides of every pathway.** They are infinitely tall,
+  so there is no sky and no seeing over them.
+- Where pathways cross, the corridors merge: the walkable space is the union of
+  all corridors, and the walls are its boundary. A crossing appears as a side
+  opening, and its sentence runs across your floor at right angles (visible on
+  the left of the first frame of the prototype).
+- Where sentences overlap on the same line (palimpsest), their words share
+  the floor and print over each other.
+- **The camera is always inside a pathway**, at eye height, looking along it in
+  the reading direction. You read the sentence by walking forward.
+- Because the walls are infinitely tall, what's visible is purely 2D: a ray
+  hits the first wall in the floor plan. That makes rendering exact.
+
+**Look (1-bit)**
+- **Font**: EB Garamond (SIL Open Font License), semibold for the floor so it
+  holds up in 1-bit. Words are set large: each word fills the width of its
+  pathway.
+- **Walls**: white, ruled with horizontal lines every 0.3 units of height, like
+  lined paper. They converge to the vanishing point and are dropped where they
+  would come too close together to print. Black verticals at corners and
+  openings, a black line where wall meets floor.
+- Text in the distance fades out by culling, not grey.
+- **Formats**: a single view (one page), a 4–6 frame walk along a sentence, and a
+  360° panorama at a junction across a spread.
 
 **Where the camera goes** (automatic candidates, then picked by hand)
-- Inside the densest crossing hotspot, beside a long stroke, looking along it
-  so the sentence runs off towards the vanishing point.
-- Standing on the most-crossed sentence.
-- Inside the largest chamber.
-- At a return or palimpsest.
-
-The 2D page marks every viewpoint with a small eye symbol and view cone, using
-the same arrow rule (black, white over ink).
+- A few words before a sentence ends, so the turn ahead is visible (the
+  sentiment turn seen from the ground). Ranked by how many pathways cross the
+  stretch ahead.
+- On the most-crossed sentence.
+- Inside a junction or a palimpsest.
+- The 2D page marks every viewpoint with a small eye symbol and view cone,
+  using the arrow rule (black, white over ink).
 
 **Methods defined from the ground** (added to the toolkit)
-- **Sightline count**: how many distinct sentences are visible from a point.
-- **Vista**: the longest unobstructed sightline.
-- **Enclosure**: the area of the visibility polygon. A small value means
-  claustrophobic, a large value means open.
+- **Sightline count**: how many distinct sentences are visible from the
+  viewpoint.
+- **Vista**: how far you can see along the pathway before a wall.
+- **Openings**: side openings per 10 words, which shows how porous a passage is.
 
-Prototype: `prototypes/view3d.py` (raster, for checking the idea; the final
-version is vector). Its first frame is from The Trial's densest tangle, looking
-along a wall with its sentence written on the floor.
+**Final renderer**: vector. The floor maps to the image by a homography, so
+glyph outlines (fontTools) are transformed exactly and stay sharp close to
+the camera. Wall courses and edges are lines. The prototype
+`prototypes/view3d.py` is a raster ray-marcher, for checking the look only.
 
 ---
 

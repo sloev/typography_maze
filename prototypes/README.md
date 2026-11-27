@@ -12,4 +12,6 @@ Run them from the folder that contains `texts/`.
 |---|---|
 | `strokes.py texts/*.txt` | One stroke per sentence, fitted to A5 → `sentence_strokes_a5.png` |
 | `crossings.py texts/*.txt` | Crossings, crossing gaps, collinear overlaps, most-crossed sentence |
-| `view3d.py texts/7849.txt out.png` | Ground view from the densest tangle → `ground_view_trial.png` |
+| `view3d.py texts/7849.txt out.png [n]` | Ground view inside a pathway; n picks the n-th ranked viewpoint → `ground_view_trial.png` |
+
+Also needed for `view3d.py`: `fonts/EBGaramond.ttf` (Google Fonts, SIL Open Font License).
