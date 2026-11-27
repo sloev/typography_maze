@@ -12,6 +12,6 @@ Run them from the folder that contains `texts/`.
 |---|---|
 | `strokes.py texts/*.txt` | One stroke per sentence, fitted to A5 → `sentence_strokes_a5.png` |
 | `crossings.py texts/*.txt` | Crossings, crossing gaps, collinear overlaps, most-crossed sentence |
-| `view3d.py texts/7849.txt out.png [n] [sun_az] [sun_el] [haze] [wall]` | Ground view inside a pathway, sunlit through haze, 1-bit. n picks the n-th ranked viewpoint; sun azimuth is relative to the view direction → `ground_view_trial.png`, `ground_view_1bit_detail.png` (actual 1-bit pixels) |
+| `view3d.py texts/7849.txt out.png [n] [sun_az] [sun_el] [haze]` | Ground view inside a pathway, with wall heights set by the words, sunlit through haze, 1-bit. n picks the n-th ranked viewpoint; sun azimuth is relative to the view direction → `ground_view_trial.png`, `ground_view_1bit_detail.png` (actual 1-bit pixels) |
 
 Also needed for `view3d.py`: `fonts/EBGaramond.ttf` (Google Fonts, SIL Open Font License), and `pip install numpy pillow numba`.

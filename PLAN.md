@@ -185,8 +185,13 @@ A second kind of image, used where the 2D drawing becomes too dense to read
   right-hand wall, the tops of the letters point to the left-hand wall, and it
   reads in the walking direction. Each sentence is justified to its stroke length
   (1 unit = 1 word), so the lettering fills the corridor width.
-- **Tall walls line both sides of every pathway** (solid mass between pathways).
-  They are drawn infinitely tall: there is no sky and no seeing over them.
+- **Walls line both sides of every pathway, and their height comes from the
+  text.** Each word raises the wall segment beside it to
+  `h = 0.35 + 0.14 × letters + 0.55 × |sentiment|` (in word units; the pathway
+  is 0.52 wide, eye height 0.30). Every sentence therefore has its own
+  skyline: long words stand tall, and emotionally charged words stand up as
+  towers above their neighbours. Walls are 0.30 thick. Where two sentences'
+  walls meet, the taller one wins.
 - Where pathways cross, the corridors merge (the walkable space is the union of
   all corridors). A crossing appears as a side opening, with the other sentence
   running across your floor.
@@ -200,9 +205,9 @@ A second kind of image, used where the 2D drawing becomes too dense to read
   walls throw sharp shadows onto the floor and onto each other. Typically one
   wall is lit, the other in shade, and a lit band runs along the floor, cut by a
   clean diagonal shadow line. Side openings let in light.
-- Infinitely tall walls would let no sunlight in at all. The light is
-  therefore calculated as if the walls end above the frame (a
-  `WALL` height, currently 1.2 units), while they are still drawn as endless.
+- With finite, word-height walls the sky shows above them, and sunlight falls
+  over the low words and into the pathway. Shadows step with the skyline of
+  the sentence that casts them.
 - **Haze**: distance fades towards a bright haze tone, and the sunlit air
   scatters light towards the eye (forward scattering), so light shafts glow
   at the end of a pathway and in openings.
@@ -230,10 +235,13 @@ panorama at a junction across a spread.
 - **Vista**: how far you can see along the pathway before a wall.
 - **Openings**: side openings per 10 words, which shows how porous a passage is.
 
-**Renderer**: the prototype `prototypes/view3d.py` ray-marches the floor plan
-(walls), samples a high-resolution lettering texture (floor), traces exact
-shadows and integrates the haze, all accelerated with numba, in about 10 s per
-frame. For print it renders at ≥ 1200 dpi before dithering. The lettering
+**Renderer**: the prototype `prototypes/view3d.py` builds a height field
+(walls from word heights, pathways carved out) and renders it with exact
+grid traversal, front to back with a y-buffer: vertical faces, wall tops and
+floor. It samples a high-resolution lettering texture for the floor, traces
+exact shadows through the height field towards the sun, and integrates the
+sunlit haze along each view ray. All of it is accelerated with numba, at about
+20 s per frame. For print it renders at ≥ 1200 dpi before dithering. The lettering
 texture near the camera needs more resolution (or the glyphs rendered as
 outlines through the floor homography) so close letters stay sharp.
 
