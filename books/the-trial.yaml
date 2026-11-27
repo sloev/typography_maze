@@ -12,3 +12,4 @@ label_band_mm: 30
 shaft_delta: 0.75   # degrees of tilt per turn
 shaft_azimuth: 35
 shaft_elevation: 24
+robustness_drop: [like]   # tests repeated with these ambiguous words unscored

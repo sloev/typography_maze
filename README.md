@@ -47,7 +47,7 @@ And here is an excerpt showing that the lines actually are text:
 
 ```
 pip install numpy shapely pycairo pyyaml
-make            # = python3 -m labyrinth.build books/the-trial.yaml, then latexmk in book/
+make            # = python3 -m labyrinth.build + labyrinth.experiments for each books/*.yaml, then latexmk in book/
 ```
 
 | Module | What it does |
@@ -58,6 +58,9 @@ make            # = python3 -m labyrinth.build books/the-trial.yaml, then latexm
 | `labyrinth/analysis.py` | Global measures, the shuffle baseline (z-scores, empirical p), crossings, palimpsests, knots, hub, return, coil, darkest passage, corridor, chapter overlap |
 | `labyrinth/draw.py` | Vector PDFs, pure black: the labelled maze (arrows white where they cross ink), knot zooms, the mineshaft |
 | `labyrinth/build.py` | Runs everything for one `books/*.yaml`, writes `build/<slug>/` including `numbers.tex`, so every number in the prose is generated |
+| `labyrinth/variants.py` | Turning-rule variations: quarter (90°), graded (VADER-normalised sentence valence × 90°), rolling (per word, running mean of the last 12 words) |
+| `labyrinth/letters.py` | Standing letters for any path geometry, screened to 1-bit |
+| `labyrinth/experiments.py` | Every rule from every view (plan, mineshaft, letters at eye level and from above) → `build/<slug>/variants/` |
 | `book/` | `main.tex`, `methods.tex` (definitions and the test), `trial.tex` (The Trial), `labyrinth.sty` (A5 page design) |
 
 `book/main.pdf` is the current specimen.

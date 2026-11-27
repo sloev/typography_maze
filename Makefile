@@ -6,6 +6,7 @@ all: book/main.pdf
 
 build/%/numbers.tex: books/%.yaml labyrinth/*.py
 	python3 -m labyrinth.build $<
+	python3 -m labyrinth.experiments $<
 
 book/main.pdf: $(SLUGS) book/*.tex book/labyrinth.sty
 	cd book && latexmk -lualatex -interaction=nonstopmode -halt-on-error main.tex

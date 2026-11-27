@@ -245,3 +245,29 @@ def draw_mineshaft(v3, path, wmm, hmm, azimuth=35.0, elevation=18.0, dist_factor
         ctx.set_line_width(0.25); ctx.stroke()
     surf.finish()
     return [(float(X[k]), float(Y[k])) for k in marks], vertical_scale
+
+
+def draw_path(vertices, path, wmm, hmm, line_mm=None, marks=()):
+    """Any 2D polyline (float coordinates), fitted to the box, long side vertical."""
+    v = np.asarray(vertices, float)
+    xmin, ymin = v.min(0); xmax, ymax = v.max(0)
+    rot = (xmax - xmin) > (ymax - ymin) and (hmm > wmm)
+    fit = Fit(xmin, ymin, xmax, ymax, 0, 0, wmm, hmm, rotate=rot)
+    surf, ctx = _surface(path, wmm, hmm)
+    ctx.set_line_width(line_mm or max(HAIR, 0.12 / MM))
+    ctx.set_line_join(cairo.LINE_JOIN_ROUND)
+    _polyline(ctx, [fit(x, y) for x, y in v])
+    ctx.stroke()
+    for k, filled in ((0, True), (len(v) - 1, False)):
+        x, y = fit(*v[k])
+        ctx.rectangle(x - 0.6, y - 0.6, 1.2, 1.2)
+        ctx.set_source_rgb(0 if filled else 1, 0 if filled else 1, 0 if filled else 1)
+        ctx.fill_preserve(); ctx.set_source_rgb(0, 0, 0); ctx.set_line_width(0.2); ctx.stroke()
+    out = []
+    for k in marks:
+        x, y = fit(*v[k]); out.append((x, y))
+        ctx.arc(x, y, 0.55, 0, 2 * math.pi)
+        ctx.set_source_rgb(1, 1, 1); ctx.fill_preserve(); ctx.set_source_rgb(0, 0, 0)
+        ctx.set_line_width(0.15); ctx.stroke()
+    surf.finish()
+    return out, fit.s

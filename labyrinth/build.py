@@ -74,7 +74,8 @@ def main(cfg_path):
     book = text.load(cfg["gutenberg"], cfg["title"], cfg["author"], cfg.get("translator", ""))
     S = book.sentences
     n = np.array([len(s.words) for s in S])
-    sc = np.array([sentiment.score(s.words) for s in S], float)
+    names = sentiment.book_names([s.text for s in S])
+    sc = np.array([sentiment.score_text(s.text, names) for s in S], float)
     t = np.array([sentiment.turn(x, cfg.get("dead_zone", 0)) for x in sc])
     w = walk.walk2d(n, t, sc)
     chap = np.array([s.chapter for s in S])
@@ -82,6 +83,26 @@ def main(cfg_path):
     N["title"] = tex_escape(book.title); N["author"] = tex_escape(book.author)
     N["translator"] = tex_escape(book.translator); N["gid"] = str(book.gid)
     N["sentences"] = fmt(len(S)); N["words"] = fmt(int(n.sum())); N["chapters"] = str(len(book.chapters))
+
+    # ---- robustness: the same tests with ambiguous lexicon words left unscored
+    drop = cfg.get("robustness_drop", [])
+    if drop:
+        sc_r = np.array([sentiment.score_text(s.text, names | frozenset(drop)) for s in S], float)
+        t_r = np.array([sentiment.turn(x, cfg.get("dead_zone", 0)) for x in sc_r])
+        w_r = walk.walk2d(n, t_r, sc_r)
+        m_r = A.global_measures(w_r)
+        z_r = A.zscores(m_r, A.shuffle_baseline(n, t_r, sc_r, n=cfg.get("shuffles", 200), seed=cfg.get("seed", 7) + 1))
+        N["r-words"] = ", ".join(f"\\emph{{{d}}}" for d in drop)
+        N["r-handedness"] = fmt(m_r["handedness"], 2)
+        N["r-net"] = fmt(int(t_r.sum())); N["net"] = fmt(int(t.sum()))
+        for k, v in z_r.items():
+            N[f"rz-{k}"] = fmt(v["z"], 1)
+        v3r, pitch_r = walk.walk3d(n, t_r, cfg.get("shaft_delta", 0.75))
+        N["r-shaft-final"] = fmt(float(v3r[-1, 2]), 0)
+        N["r-shaft-final-pitch"] = fmt(float(pitch_r[-1]), 1)
+        for k, v in z_r.items():
+            N[f"rsig-{k}"] = "1" if abs(v["z"]) >= 3 else "0"
+    N["names"] = ", ".join(f"\\emph{{{w}}}" for w in sorted(names))
 
     # ---- global measures + shuffle baseline
     m = A.global_measures(w)
@@ -91,6 +112,7 @@ def main(cfg_path):
         N[f"m-{k}"] = fmt(v, 3 if abs(v) < 1 else 2)
     for k, v in z.items():
         N[f"z-{k}"] = fmt(v["z"], 1)
+        N[f"sig-{k}"] = "1" if abs(v["z"]) >= 3 else "0"
         N[f"b-{k}"] = fmt(v["mean"], 3 if abs(v["mean"]) < 1 else 2)
         N[f"sd-{k}"] = fmt(v["sd"], 3 if abs(v["sd"]) < 1 else 2)
         N[f"p-{k}"] = ("<0.005" if v["p"] < 0.005 else fmt(v["p"], 3))
@@ -257,6 +279,13 @@ def main(cfg_path):
     mpos, vscale = draw.draw_mineshaft(v3, os.path.join(out, "mineshaft.pdf"), TEXT_W, 118,
                                        azimuth=cfg.get("shaft_azimuth", 35),
                                        elevation=cfg.get("shaft_elevation", 14), marks=marks)
+    if drop:
+        draw.draw_mineshaft(v3r, os.path.join(out, "mineshaft-r.pdf"), 58, 100,
+                            azimuth=cfg.get("shaft_azimuth", 35), elevation=cfg.get("shaft_elevation", 14),
+                            vertical_scale=vscale, marks=marks)
+        draw.draw_mineshaft(v3, os.path.join(out, "mineshaft-half.pdf"), 58, 100,
+                            azimuth=cfg.get("shaft_azimuth", 35), elevation=cfg.get("shaft_elevation", 14),
+                            vertical_scale=vscale, marks=marks)
     with open(os.path.join(out, "mineshaft-labels.tex"), "w") as f:
         for k, (x, y) in enumerate(mpos):
             lab = str(k + 1) if k < len(book.chapter_starts) else "end"
@@ -265,6 +294,7 @@ def main(cfg_path):
     N["shaft-delta"] = fmt(cfg.get("shaft_delta", 0.75), 2)
     N["shaft-depth"] = fmt(float(-v3[:, 2].min()), 0); N["shaft-rise"] = fmt(float(v3[:, 2].max()), 0)
     N["shaft-final-pitch"] = fmt(float(pitch[-1]), 1)
+    N["shaft-final"] = fmt(float(v3[-1, 2]), 0)
     N["shaft-min-pitch"] = fmt(float(pitch.min()), 1); N["shaft-max-pitch"] = fmt(float(pitch.max()), 1)
     kmin = int(np.argmin(v3[1:, 2]))
     N["shaft-deepest"] = sref(kmin); N["shaft-deepest-ch"] = str(ch(kmin))

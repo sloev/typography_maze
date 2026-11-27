@@ -22,6 +22,13 @@ $-5$ to $+5$; words not in the lexicon count as $0$). Because every stroke has a
 whole-number length and runs along a grid axis, every vertex, crossing and
 overlap of the drawing has exact integer coordinates. Nothing is rounded.
 
+\paragraph{Names are not feelings.} A lexicon word is not scored when it is a
+name or title, that is, when it is capitalised and does not begin a sentence or
+a quotation (\emph{Miss} Bürstner, \emph{Block}). A word used this way in at
+least half of its occurrences in a book (and at least three times) is treated
+as a name throughout that book, even at the start of a sentence. The rule is
+applied automatically, and each chapter lists the names it found.
+
 \paragraph{Sentences.} Text is taken from Project Gutenberg with the licence
 header and footer removed. Chapter headings and chapter subtitles are recorded
 but not drawn. A paragraph break always ends a sentence. Inside a paragraph, a
@@ -135,3 +142,10 @@ limits apply equally to the book and to its shuffles, so they cannot by
 themselves produce a significant $z$. They do limit what a significant $z$
 means: it is a statement about the order of the scored sentences, not about
 the author's intentions.
+
+\paragraph{Robustness.} Some common words are ambiguous in a way a word list
+cannot resolve. \emph{Like} is a feeling (``I'd like'') or a comparison (``like
+a dog''). For each book, every test is repeated with such words left unscored,
+and a result is reported as a property of the book only if it survives. The
+Variations chapter (p.~\pageref{ch:variations}) draws the same book with two
+other turning rules.
