@@ -223,6 +223,5 @@ def tide(book, path, wmm=120.0, row_h=11.0, rows=6, window=300, gap=3.0):
             ctx.line_to(x, y0 - v * row_h)
         ctx.line_to(wmm, y0); ctx.close_path(); ctx.fill()
         ctx.set_line_width(0.15); ctx.move_to(0, y0); ctx.line_to(wmm, y0); ctx.stroke()
-        ctx.set_line_width(0.08); ctx.move_to(0, y0 - row_h); ctx.line_to(wmm, y0 - row_h); ctx.stroke()
     surf.finish()
     return dict(speech_share=float(m.mean()), longest_silence=int(max((len(x) for x in "".join("1" if v else "0" for v in m).split("1")), default=0)))

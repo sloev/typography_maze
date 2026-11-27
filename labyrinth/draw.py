@@ -151,7 +151,7 @@ def place_labels(anchors, wmm, hmm, band, line_h):
             ys = [max(0, y) for y in ys]
         for a, y, h in zip(col, ys, hs):
             lx = band - 1.0 if side == "L" else wmm - band + 1.0
-            out.append(dict(a, side=side, top=y, height=h, lx=lx, ly=y + 1.8))
+            out.append(dict(a, side=side, top=y, height=h, lx=lx, ly=y + 1.15))   # mid-height of the label's first line
     return out
 
 
@@ -294,22 +294,22 @@ def draw_cutout(w, texts, path, wmm, hmm, cx, cy, radius, focus=(), max_font_mm=
         a, b = fit(x0, y0), fit(x1, y1)
         heavy = k in focus
         ctx.set_source_rgb(0, 0, 0)
-        ctx.set_line_width(0.32 if heavy else 0.1)
-        ctx.move_to(*a); ctx.line_to(*b); ctx.stroke()
         L = math.hypot(b[0] - a[0], b[1] - a[1])
-        if L < 1 or fs < 0.9:
-            continue
         ctx.select_font_face("EB Garamond", cairo.FONT_SLANT_NORMAL,
                              cairo.FONT_WEIGHT_BOLD if heavy else cairo.FONT_WEIGHT_NORMAL)
         ctx.set_font_size(fs)
         ext = ctx.text_extents(texts[k])
-        if ext.x_advance <= 0:
+        if L < 1 or fs < 0.9 or ext.x_advance <= 0:
+            # too small to read: the stroke is drawn as a plain line instead
+            ctx.set_line_width(0.32 if heavy else 0.1)
+            ctx.move_to(*a); ctx.line_to(*b); ctx.stroke()
             continue
+        # the sentence IS the stroke: no line under it, letters centred on the path
         ctx.save()
         ctx.translate(*a)
         ctx.rotate(math.atan2(b[1] - a[1], b[0] - a[0]))
         ctx.scale(L / ext.x_advance, 1.0)    # the sentence fills its stroke exactly
-        ctx.move_to(0, -0.25)
+        ctx.move_to(0, 0.33 * fs)            # baseline below the path, so the x-height sits on it
         ctx.show_text(texts[k])
         ctx.restore()
     ctx.reset_clip()
