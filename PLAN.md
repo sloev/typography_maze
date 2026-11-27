@@ -221,9 +221,28 @@ A second kind of image, used where the 2D drawing becomes too dense to read
   dither grain is part of the look and reads as haze.
 - **Font**: EB Garamond (SIL Open Font License), semibold.
 
-**Formats**: a single view (one page), a 4–6 frame walk along a sentence (the
-sun fixed per book, so the light is consistent between frames), and a 360°
-panorama at a junction across a spread.
+**Viewpoints** (`prototypes/render.py`, per-pixel 3D ray casting through the
+word-height field, so any position, direction and tilt works). All are aimed at
+the same top-ranked junction, so a book can show one place from several angles:
+
+| Mode | Camera | What it shows |
+|---|---|---|
+| `walk` | eye height 0.30 in the pathway, level | Reading the sentence ahead, openings at crossings |
+| `corner` | in the junction, turned down the crossing pathway, tilted 14° down | The crossing sentence, with the original running off to the side |
+| `worm` | eye almost on the floor, tilted 14° up | The words as towers; the skyline of a sentence against the sky |
+| `wall` | standing on the left-hand wall 2.5 words back, tilted 40° down | Looking down into the pathway and across neighbouring walls |
+| `oblique` | 6.5 units back and up, tilted 40° down, turned 30° | The junction as a small city of words |
+| `aerial` | 11 units out, tilted 62° down | The knot: several crossing pathways and their walls |
+| `plan` | 8 units up, straight down | Almost the 2D map, but with height, shadow, and the crossing sentences legible |
+
+`walk`, `wall` and `plan` are the strongest. `plan` connects directly to the 2D
+drawing: it is the same junction as the zoom panel, with depth. `oblique` and
+`aerial` show the structure but the floor text is small, so they suit
+spreads more than single pages.
+
+Further formats: a 4–6 frame walk along a sentence (the sun fixed per book), a
+360° panorama at a junction across a spread, and a "descent" sequence from
+`plan` → `aerial` → `wall` → `walk`, which zooms from the map into the pathway.
 
 **Where the camera goes: always where the pathways cross most**
 - All crossings are computed exactly: every horizontal stroke against every

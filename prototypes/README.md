@@ -15,3 +15,10 @@ Run them from the folder that contains `texts/`.
 | `view3d.py texts/7849.txt out.png [n] [sun_az] [sun_el] [haze]` | Ground view inside a pathway, with wall heights set by the words, sunlit through haze, 1-bit. n picks the n-th ranked viewpoint (ranked by crossings ahead); sun azimuth is relative to the view direction → `ground_view_trial.png`, `ground_view_1bit_detail.png` (actual 1-bit pixels) |
 
 Also needed for `view3d.py`: `fonts/EBGaramond.ttf` (Google Fonts, SIL Open Font License), and `pip install numpy pillow numba`.
+
+### Viewpoints
+
+`render.py texts/7849.txt out.png [n] [sun_az] [sun_el] [haze] [mode]`, where mode is one of
+`walk corner worm wall oblique aerial plan`. It uses `scene.py` (walk, crossings, word-height field, lettering)
+and renders any camera position and tilt by per-pixel ray casting → `viewpoints_trial.png`
+(top to bottom: wall, oblique / aerial, plan / worm, corner).
