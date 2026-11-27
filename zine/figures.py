@@ -32,10 +32,12 @@ for slug in only:
     w = walk.walk2d(n, t, sc)
     # full page, hairline, no marks
     draw.draw_path(w.vertices(), os.path.join(OUT, f"maze-{slug}.pdf"), 128, 176, line_mm=0.08)
-    # the three turning rules, as plans, for the atlas
+    # the three turning rules, as plans for the atlas and as full pages
     for rule in variants.RULES:
         p = variants.build(book, rule)
         draw.draw_path(p.vertices2d(), os.path.join(OUT, f"plan-{rule}-{slug}.pdf"), 40, 40, line_mm=0.06)
+        if rule != "quarter":
+            draw.draw_path(p.vertices2d(), os.path.join(OUT, f"maze-{rule}-{slug}.pdf"), 128, 176, line_mm=0.08)
     # standing letters from above, quarter turns (The Trial's come from the experiments)
     if slug != "the-trial" or not os.path.exists(os.path.join(ROOT, "build", "the-trial", "variants", "quarter-high.png")):
         p = variants.build(book, "quarter")

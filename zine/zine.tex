@@ -66,10 +66,14 @@
   \cell{\cdir #1-pride-and-prejudice.pdf}{#2}{Pride}\hspace*{\fill}\par}
 % the three pages every other book gets
 \newcommand\bookpages[5]{% #1 slug, #2 kicker no, #3 title line, #4 caption, #5 letters image
-  \kicker{#2a}{#3}
+  \kicker{#2a}{#3: right angles}
   \begin{center}\includegraphics[width=124mm,height=156mm,keepaspectratio]{\zdir maze-#1.pdf}\end{center}
   \vspace{-1mm}\noindent{\fontsize{7.8}{9.6}\selectfont #4}\folio\newpage
-  \kicker{#2b}{#3: eight places, magnified}
+  \kicker{#2b}{#3: graded angles}
+  \begin{center}\includegraphics[width=124mm,height=156mm,keepaspectratio]{\zdir maze-graded-#1.pdf}\end{center}
+  \vspace{-1mm}\noindent{\fontsize{7.8}{9.6}\selectfont The same book, each sentence turning only as far as it
+  feels: a faint feeling leans, a strong one folds. Opposite, every feeling is a right angle.}\folio\newpage
+  \kicker{#2c}{#3: eight places, magnified}
   \noindent\cell{../build/#1/cut-A.pdf}{41mm}{A knot I}\hfill\cell{../build/#1/cut-B.pdf}{41mm}{B knot II}\hfill\cell{../build/#1/cut-C.pdf}{41mm}{C hub}\par\vspace{1.6mm}
   \noindent\cell{../build/#1/cut-D.pdf}{41mm}{D return}\hfill\cell{../build/#1/cut-E.pdf}{41mm}{E coil}\hfill\cell{../build/#1/cut-F.pdf}{41mm}{F darkest}\par\vspace{1.6mm}
   \noindent\cell{../build/#1/cut-G.pdf}{41mm}{G corridor}\hfill\cell{../build/#1/cut-H.pdf}{41mm}{H palimpsest}\hfill
@@ -78,14 +82,14 @@
   cross (D), the tightest spiral (E), the coldest thirty sentences (F), the longest plain run (G) and a
   sentence drawn over another (H). The sentences are the path.\par}\end{minipage}\par
   \folio\newpage
-  \kicker{#2c}{#3: among the letters}
+  \kicker{#2d}{#3: among the letters}
   \noindent\includegraphics[width=\textwidth]{#5}\par\vspace{2mm}
-  \noindent\cell{\zdir plan-quarter-#1.pdf}{40mm}{quarter turns}\hfill\cell{\zdir plan-graded-#1.pdf}{40mm}{graded turns}\hfill
-  \cell{\zdir plan-rolling-#1.pdf}{40mm}{rolling turns}\par
+  \noindent\cell{\zdir plan-quarter-#1.pdf}{40mm}{right angles}\hfill\cell{\zdir plan-graded-#1.pdf}{40mm}{graded angles}\hfill
+  \cell{\zdir plan-rolling-#1.pdf}{40mm}{rolling curves}\par
   \zcap{Above: the busiest junction of the walk, from above. Every sentence stands on its own line as flat black
   letters; where the walk crosses itself, sentences pass through each other. Below: the same book walked three
-  ways. Quarter: every feeling a right angle. Graded: each sentence turns as far as it feels. Rolling: the walker
-  turns at every word, by the mood of the last twelve.}
+  ways. Right angles: every feeling turns a quarter. Graded angles: each sentence turns as far as it feels.
+  Rolling curves: the walker turns at every word, by the mood of the last twelve.}
   \folio\newpage}
 
 \begin{document}
@@ -241,25 +245,35 @@ at every word, so the sentences stand along curves.}
 }
 
 % =================================================================== 10
-\zpage{09}{Three ways to walk The Trial}{%
-\noindent\cell{../build/the-trial/variants/quarter-plan.pdf}{40mm}{quarter: plan}\hfill
-\cell{../build/the-trial/variants/graded-plan.pdf}{40mm}{graded: plan}\hfill
-\cell{../build/the-trial/variants/rolling-plan.pdf}{40mm}{rolling: plan}\par\vspace{2mm}
-\noindent\cell{../build/the-trial/variants/quarter-shaft.pdf}{40mm}{quarter: shaft}\hfill
+\zpage{09}{Three ways to walk The Trial: right angles, graded angles, rolling curves}{%
+\noindent\cell{../build/the-trial/variants/quarter-plan.pdf}{40mm}{right angles}\hfill
+\cell{../build/the-trial/variants/graded-plan.pdf}{40mm}{graded angles}\hfill
+\cell{../build/the-trial/variants/rolling-plan.pdf}{40mm}{rolling curves}\par\vspace{2mm}
+\noindent\cell{../build/the-trial/variants/quarter-shaft.pdf}{40mm}{right angles: shaft}\hfill
 \cell{../build/the-trial/variants/graded-shaft.pdf}{40mm}{graded: shaft}\hfill
 \cell{../build/the-trial/variants/rolling-shaft.pdf}{40mm}{rolling: shaft}\par\vspace{1mm}
 \begin{multicols}{2}\body
-\textsc{Quarter turns.} Every feeling, mild or violent, is a right angle: a maze.
+\textsc{Right angles.} Every feeling, mild or violent, turns a quarter: a maze.
 
-\textsc{Graded turns.} Each sentence's score is softened into the range from $-1$
+\textsc{Graded angles.} Each sentence's score is softened into the range from $-1$
 to $+1$ (the way the VADER model does it) and turns that fraction of a right
 angle. A faintly cold sentence leans; a bitter one folds. The maze becomes a coastline.
 
-\textsc{Rolling turns.} The walker turns at every word, by the mood of the last
+\textsc{Rolling curves.} The walker turns at every word, by the mood of the last
 twelve. A plain stretch runs straight; feeling bends it into a curve as tight as
 the feeling is strong.
 \end{multicols}
 }
+
+% =================================================================== the dynamic Trial
+\kicker{09b}{The Trial: graded angles}
+\begin{center}\includegraphics[width=124mm,height=156mm,keepaspectratio]{\zdir maze-graded-the-trial.pdf}\end{center}
+\vspace{-1mm}\noindent{\fontsize{7.8}{9.6}\selectfont Each sentence of \emph{The Trial} turns only as far as it feels, from
+a slight lean to almost a right angle. The grid maze of the cover becomes a coastline.}\folio\newpage
+\kicker{09c}{The Trial: rolling curves}
+\begin{center}\includegraphics[width=124mm,height=156mm,keepaspectratio]{\zdir maze-rolling-the-trial.pdf}\end{center}
+\vspace{-1mm}\noindent{\fontsize{7.8}{9.6}\selectfont \emph{The Trial} walked word by word, the heading bending at every
+word by the mood of the last twelve. No corners: every feeling is a curve.}\folio\newpage
 
 % =================================================================== 11
 \zpage{10}{Five books}{%
@@ -515,6 +529,23 @@ carried through dim offices. Austen hardly mentions light at all.
 \zcap{The five walks at one scale, for the size of each book's light.}
 }
 
+% =================================================================== right angles | graded angles
+\newcommand\fivewalks[1]{% #1 file prefix in build/zine
+  \noindent\cell{\zdir #1the-trial.pdf}{40mm}{Trial}\hfill\cell{\zdir #1bartleby.pdf}{40mm}{Bartleby}\hfill
+  \cell{\zdir #1yellow-wallpaper.pdf}{40mm}{Wallpaper}\par\vspace{2mm}
+  \noindent\hspace*{\fill}\cell{\zdir #1heart-of-darkness.pdf}{40mm}{Darkness}\hspace{10mm}%
+  \cell{\zdir #1pride-and-prejudice.pdf}{40mm}{Pride}\hspace*{\fill}\par}
+\zpage{24b}{Five books in right angles}{%
+\fivewalks{maze-}
+\zcap{The book's rule: every sentence a straight line, every feeling a right angle. Warm turns left, cold turns
+right, plain goes straight. The drawings are mazes on a grid, and every crossing is exact.}
+}
+\zpage{24c}{Five books in graded angles}{%
+\fivewalks{maze-graded-}
+\zcap{The same sentences turning only as far as they feel. Mild books soften into coastlines; the order of
+feelings, not their size, still decides where each walk goes.}
+}
+
 % =================================================================== 34
 \zpage{25}{Five shafts}{%
 \noindent\cell{../build/the-trial/mineshaft-half.pdf}{24mm}{Trial}\hfill\cell{../build/bartleby/mineshaft-half.pdf}{24mm}{Bartleby}\hfill
@@ -536,7 +567,8 @@ shaft under the three turning rules.}
 
 % =================================================================== 35
 \zpage{26}{Atlas: every book, every way of walking}{%
-\newcommand\arow[2]{\noindent\cell{\zdir plan-quarter-#1.pdf}{28mm}{#2: quarter}\hfill\cell{\zdir plan-graded-#1.pdf}{28mm}{graded}\hfill\cell{\zdir plan-rolling-#1.pdf}{28mm}{rolling}\hfill\cell{\cdir pronouns-#1.pdf}{28mm}{pronouns}\par\vspace{1.1mm}}
+\newcommand\arow[2]{\noindent\cell{\zdir plan-quarter-#1.pdf}{26mm}{#2}\hfill\cell{\zdir plan-graded-#1.pdf}{26mm}{#2}\hfill\cell{\zdir plan-rolling-#1.pdf}{26mm}{#2}\hfill\cell{\cdir pronouns-#1.pdf}{26mm}{#2}\par\vspace{1.1mm}}
+\noindent\makebox[26mm]{\mono{right angles}}\hfill\makebox[26mm]{\mono{graded angles}}\hfill\makebox[26mm]{\mono{rolling curves}}\hfill\makebox[26mm]{\mono{pronouns}}\par\vspace{1mm}
 \arow{the-trial}{Trial}
 \arow{bartleby}{Bartleby}
 \arow{yellow-wallpaper}{Wallpaper}

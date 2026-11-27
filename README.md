@@ -72,14 +72,14 @@ make            # = python3 -m labyrinth.build + labyrinth.experiments for each 
 
 ## The zine
 
-`zine/` is a 40-page A5 zine version of the book: dense grids of drawings for all five books, black only.
+`zine/` is a 48-page A5 zine version of the book: dense grids of drawings for all five books, each walked with right angles and with graded angles (and rolling curves), black only.
 
 ```
 make && make zine
 ```
 
 - `zine/zine.pdf`: reading order, for screen and proofs.
-- `zine/zine-print.pdf`: 10 A4 sheets, imposed for saddle stitching. Print double-sided, flip on the short edge,
+- `zine/zine-print.pdf`: 12 A4 sheets, imposed for saddle stitching. Print double-sided, flip on the short edge,
   stack in order, fold, staple twice on the fold.
 
 The Trial pages quote and draw David Wyllie's translation (a copyrighted Project Gutenberg eBook);
