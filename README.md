@@ -69,3 +69,18 @@ make            # = python3 -m labyrinth.build + labyrinth.experiments for each 
 | `book/` | `main.tex`, `methods.tex` (definitions and the test), `trial.tex` (The Trial), `labyrinth.sty` (A5 page design) |
 
 `book/main.pdf` is the current specimen.
+
+## The zine
+
+`zine/` is a 28-page A5 zine version of the book: minimal layout, one idea per page, black only.
+
+```
+make && make zine
+```
+
+- `zine/zine.pdf`: reading order, for screen and proofs.
+- `zine/zine-print.pdf`: 7 A4 sheets, imposed for saddle stitching. Print double-sided, flip on the short edge,
+  stack in order, fold, staple twice on the fold.
+
+The Trial pages quote and draw David Wyllie's translation (a copyrighted Project Gutenberg eBook);
+get permission before selling copies.

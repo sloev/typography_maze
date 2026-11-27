@@ -1,0 +1,418 @@
+% LABYRINTHOGRAPHY — a zine. A5, 28 pages, 1-bit black.
+% Build: make zine   (needs `make` first: every number and figure comes from build/)
+\documentclass[9pt,twoside]{memoir}
+\setstocksize{210mm}{148mm}
+\settrimmedsize{\stockheight}{\stockwidth}{*}
+\setlrmarginsandblock{14mm}{14mm}{*}
+\setulmarginsandblock{14mm}{22mm}{*}
+\setheadfoot{0mm}{10mm}
+\checkandfixthelayout
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{EBGaramond}[Path=../cache/fonts/, Extension=.otf, UprightFont=*-Regular,
+  ItalicFont=*-Italic, BoldFont=*-SemiBold, Numbers=OldStyle]
+\newfontfamily\figfont{EBGaramond}[Path=../cache/fonts/, Extension=.otf, UprightFont=*-Regular,
+  ItalicFont=*-Italic, BoldFont=*-SemiBold, Numbers={Lining,Monospaced}]
+\newfontfamily\monofont{IBMPlexMono}[Path=../cache/fonts/, Extension=.ttf, UprightFont=*-Regular,
+  BoldFont=*-Medium, LetterSpace=6]
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\setlength\parindent{0pt}
+\setlength\parskip{0.6em}
+\linespread{1.08}
+\raggedright
+\pagestyle{empty}
+% numbers from the engine
+\newcommand\lab[1]{\csname lab@#1\endcsname}
+\input{../build/the-trial/numbers.tex}
+\input{../build/compare/numbers.tex}
+\input{../build/zine/first-steps.tex}
+% --- the page grammar: a kicker at the top, the image in the middle, a few lines below
+\newcommand\mono[1]{{\monofont\fontsize{6.4}{8}\selectfont\MakeUppercase{#1}}}
+\newcommand\folio{\vfill\noindent\makebox[\textwidth][\ifodd\value{page}r\else l\fi]{\mono{\thepage}}}
+\newcommand\kicker[2]{\noindent\mono{#1\quad —\quad #2}\par\vspace{6mm}}
+\newcommand\zpage[3]{% #1 number, #2 title, #3 body (figure and text)
+  \kicker{#1}{#2}#3\folio\newpage}
+\newcommand\zcap[1]{\par\vspace{5mm}{\fontsize{9.4}{12.4}\selectfont #1}\par}
+\newcommand\zsmall[1]{\par\vspace{2mm}{\monofont\fontsize{5.6}{7}\selectfont #1}\par}
+\newcommand\bk[1]{\emph{\lab{c-#1-title}}}
+\newcommand\cdir{../build/compare/}
+% the maze labels and record macros used by generated files
+\newcommand\lblhead[1]{\MakeUppercase{#1}}
+\newcommand\lblletter[1]{#1}
+\tikzset{mazelabel/.style={inner sep=0pt, font=\monofont\fontsize{5.4}{6.6}\selectfont},
+         shaftlabel/.style={inner sep=0.5pt, fill=white, anchor=west, font=\monofont\fontsize{5}{6}\selectfont}}
+\newcommand\labelledfigure[2]{\begin{tikzpicture}[x=1mm,y=1mm]
+  \node[anchor=north west, inner sep=0pt] at (0,0) {\includegraphics{#1}}; \input{#2}\end{tikzpicture}}
+\newcommand\vocabdisc[2]{\begin{tikzpicture}
+  \node[inner sep=0pt] (vd) {\includegraphics[width=#2]{#1}};
+  \draw[line width=0.2pt] (vd.center) circle ({\lab{vocab-rim}*#2});\end{tikzpicture}}
+\newcommand\five[2]{% #1 prefix, #2 width
+  \begin{center}\begin{tabular}{@{}*{5}{c}@{}}
+  \includegraphics[width=#2]{\cdir #1-the-trial.pdf} & \includegraphics[width=#2]{\cdir #1-bartleby.pdf} &
+  \includegraphics[width=#2]{\cdir #1-yellow-wallpaper.pdf} & \includegraphics[width=#2]{\cdir #1-heart-of-darkness.pdf} &
+  \includegraphics[width=#2]{\cdir #1-pride-and-prejudice.pdf}\\[1mm]
+  \mono{Trial} & \mono{Bartleby} & \mono{Wallpaper} & \mono{Darkness} & \mono{Pride}
+  \end{tabular}\end{center}}
+\newcommand\strip[2]{\noindent\mono{#2}\par\vspace{0.8mm}\includegraphics[width=\textwidth,height=16.5mm,keepaspectratio]{\cdir #1}\par\vspace{1.8mm}}
+
+\begin{document}
+
+% ------------------------------------------------------------------ 1 cover
+\noindent\mono{Labyrinthography}\hfill\mono{01}
+\vfill
+\begin{center}\includegraphics{../build/zine/cover-maze.pdf}\end{center}
+\vfill
+\noindent\mono{Novels drawn as the walk their sentences make}
+\newpage
+
+% ------------------------------------------------------------------ 2
+\zpage{01}{The walk}{%
+{\fontsize{12}{16}\selectfont Read a novel one sentence at a time, and walk.\par}
+\vspace{4mm}
+Every sentence is a straight line, as long as it has words. Before each line,
+turn. A warm sentence turns you a quarter to the left. A cold one turns you to
+the right. A plain one, a door, a staircase, keeps you going straight.
+
+How a sentence feels is counted with a published list of some 3,400 English
+words, each scored from $-5$ to $+5$. Names are not feelings, so \emph{Miss}
+and \emph{Block} are not counted.
+
+Nothing is placed by hand. The drawing is the book.
+}
+
+% ------------------------------------------------------------------ 3
+\zpage{02}{Eight sentences}{%
+\vfill
+\begin{center}\includegraphics{../build/zine/first-steps.pdf}\end{center}
+\vfill
+\zcap{K. waits up for Miss Bürstner (\stepsfrom--\stepsto). ``Oh, Mr.~K.!''
+turns left. ``It's me,'' said K., and the path goes straight. ``It is a little
+odd, isn't it?'' turns right.}
+}
+
+% ------------------------------------------------------------------ 4
+\zpage{03}{The Trial, Franz Kafka}{%
+The whole novel, \lab{sentences} sentences, opposite. It begins at the black
+square and ends at the open one.
+
+\vspace{4mm}
+{\monofont\fontsize{6.4}{10}\selectfont
+A \quad KNOT I\quad the densest tangle\\
+B \quad KNOT II\\
+C \quad HUB\quad the most-crossed sentence\\
+D \quad RETURN\quad two sentences \lab{ret-gap} apart, crossing\\
+E \quad COIL\quad the tightest spiral\\
+F \quad DARKEST\quad thirty cold sentences in a row\\
+G \quad CORRIDOR\quad the longest plain stretch\\
+H \quad PALIMPSEST\quad a sentence drawn over another\par}
+
+\vspace{4mm}
+The tangles sit in the middle of the book, where K. goes from the lawyer to the
+painter to Block. The places he goes to learn about his case, hundreds of pages
+apart, end up on the same small patch of ground.
+}
+
+% ------------------------------------------------------------------ 5 the maze
+\vspace*{-4mm}
+\noindent\hspace*{-1mm}\scalebox{0.93}{\labelledfigure{../build/the-trial/maze.pdf}{../build/the-trial/maze-labels.tex}}
+\folio\newpage
+
+% ------------------------------------------------------------------ 6
+\zpage{04}{C — The hub}{%
+\vfill
+\begin{center}\includegraphics[width=80mm]{../build/the-trial/cut-C.pdf}\end{center}
+\vfill
+\zcap{The sentence the path crosses most, \lab{hub-n} times. A court official:
+``\lab{hub-quote}'' Most of the lines that cut across it are Block, describing
+years of hearings that ``went through the same things anyway''.}
+}
+
+% ------------------------------------------------------------------ 7
+\zpage{05}{E — The coil}{%
+\vfill
+\begin{center}\includegraphics[width=80mm]{../build/the-trial/cut-E.pdf}\end{center}
+\vfill
+\zcap{Two and a half full circles in twelve sentences: the lawyer reporting
+progress. ``The results are very encouraging.'' The word list hears hope. The
+novel knows better: ``there was always some progress, but he could never be
+told what sort of progress it was.''}
+}
+
+% ------------------------------------------------------------------ 8
+\zpage{06}{Feelings that linger}{%
+{\fontsize{12}{16}\selectfont After a cold sentence, Kafka writes another cold one
+\lab{pp-R}\,\% of the time. Chance would give \lab{base-R}\,\%.\par}
+\vspace{6mm}
+Shuffle the novel's sentences like cards, two hundred times, and draw each
+shuffle. Every shuffle has the same sentences. Only the order is lost.
+
+Not one of the two hundred kept its moods together the way the novel does.
+Feeling in \emph{The Trial} does not strike. It settles over a passage and
+stays, and the path folds back on itself.
+
+Everything else (how big the drawing is, how far it wanders, how often it
+crosses) the shuffles do too. Kafka's order decides only where the tangle sits.
+}
+
+% ------------------------------------------------------------------ 9
+\zpage{07}{The shaft, and one word}{%
+\begin{center}
+\includegraphics[width=50mm]{../build/the-trial/mineshaft-half.pdf}\hspace{6mm}%
+\includegraphics[width=50mm]{../build/the-trial/mineshaft-r.pdf}\\[1mm]
+\makebox[50mm]{\mono{every word}}\hspace{6mm}\makebox[50mm]{\mono{without "like"}}
+\end{center}
+\zcap{Build the walk in three dimensions: warm sentences tilt it up, cold
+ones down. Scored as the list says, \emph{The Trial} climbs. But its largest
+source of warmth is \emph{like}, used mostly as a comparison (``like a dog''),
+not as affection. Leave that one word out and the book sinks. A drawing can show
+the limits of its own method.}
+}
+
+% ------------------------------------------------------------------ 10
+\zpage{08}{Standing among the sentences}{%
+\vfill
+\includegraphics[width=\textwidth]{../build/the-trial/variants/quarter-high.png}
+\vfill
+\zcap{The busiest junction of the walk, seen from above. Every sentence stands
+on its own line as flat black letters. Where the walk crosses itself, sentences
+pass through each other.}
+}
+
+% ------------------------------------------------------------------ 11
+\zpage{09}{Walked word by word}{%
+\vfill
+\includegraphics[width=\textwidth]{../build/the-trial/variants/rolling-high.png}
+\vfill
+\zcap{The same walk, turning at every word by the mood of the last twelve. The
+corners melt, and each sentence stands along a curve.}
+}
+
+% ------------------------------------------------------------------ 12
+\zpage{10}{Five books}{%
+{\fontsize{12}{16}\selectfont A drawing says little until there is another beside it.\par}
+\vspace{5mm}
+\textsc{The Trial}, Franz Kafka, \lab{c-the-trial-year}\\
+\textsc{Bartleby, the Scrivener}, Herman Melville, \lab{c-bartleby-year}\\
+\textsc{The Yellow Wallpaper}, Charlotte Perkins Gilman, \lab{c-yellow-wallpaper-year}\\
+\textsc{Heart of Darkness}, Joseph Conrad, \lab{c-heart-of-darkness-year}\\
+\textsc{Pride and Prejudice}, Jane Austen, \lab{c-pride-and-prejudice-year}
+
+\vspace{5mm}
+An office and a refusal. A room and a journal. A river and a voice. A drawing
+room and a marriage. Each answers \emph{The Trial} in some way, and each is
+scored, walked and shuffled exactly the same.
+}
+
+% ------------------------------------------------------------------ 13
+\zpage{11}{Five walks}{%
+\vfill
+\five{shape}{21.5mm}
+\vspace{6mm}
+\five{scale}{21.5mm}
+\vfill
+\zcap{Above, each in its own frame: only the shape. Below, all at one scale:
+the size. \bk{yellow-wallpaper} is a pocket of \lab{c-yellow-wallpaper-sentences}
+sentences; \bk{pride-and-prejudice} runs to \lab{c-pride-and-prejudice-sentences}.
+Austen leans warm by a wide margin; Conrad and Melville lean cold.}
+}
+
+% ------------------------------------------------------------------ 14
+\zpage{12}{Vocabulary records}{%
+\begin{center}
+\vocabdisc{\cdir vocab-the-trial.png}{34mm}\hfill\vocabdisc{\cdir vocab-bartleby.png}{34mm}\hfill\vocabdisc{\cdir vocab-yellow-wallpaper.png}{34mm}\\
+\makebox[34mm]{\mono{Trial}}\hfill\makebox[34mm]{\mono{Bartleby}}\hfill\makebox[34mm]{\mono{Wallpaper}}\\[3mm]
+\vocabdisc{\cdir vocab-heart-of-darkness.png}{34mm}\hspace{8mm}\vocabdisc{\cdir vocab-pride-and-prejudice.png}{34mm}\\
+\makebox[34mm]{\mono{Darkness}}\hspace{8mm}\makebox[34mm]{\mono{Pride}}
+\end{center}
+\zcap{The dictionary as the groove of a record, \lab{vocab-words} words: the
+commonest at the centre, the rarest at the rim. Every word a book uses is a
+black dot. Stretch for stretch, \emph{The Trial} has the plainest vocabulary of the
+five, \lab{c-the-trial-types-6k} words in 6,000; Conrad the richest,
+\lab{c-heart-of-darkness-types-6k}.}
+}
+
+% ------------------------------------------------------------------ 15
+\zpage{13}{Tree rings}{%
+\vfill
+\five{rings}{21.5mm}
+\vfill
+\zcap{Cut a book like a trunk. The first page is the centre, each chapter a
+ring as large as it is long, each sentence a grain as long as its words.
+\emph{Pride and Prejudice} grows in \lab{c-pride-and-prejudice-rings} thin rings;
+\emph{Heart of Darkness} in three broad seasons.}
+}
+
+% ------------------------------------------------------------------ 16
+\zpage{14}{The loom}{%
+\five{loom}{21.5mm}
+\zcap{The names a book uses most are warp threads; the book runs down
+through them. K. is a solid black thread, there on every stretch. Elizabeth is in
+\lab{c-pride-and-prejudice-lead-share}\,\% of hers. Kurtz, the man \emph{Heart of
+Darkness} is about, is in only \lab{c-heart-of-darkness-lead-share}\,\%.}
+}
+
+% ------------------------------------------------------------------ 17
+\zpage{15}{Echoes}{%
+\strip{echo-the-trial.pdf}{Trial}
+\strip{echo-bartleby.pdf}{Bartleby}
+\strip{echo-yellow-wallpaper.pdf}{Wallpaper}
+\strip{echo-heart-of-darkness.pdf}{Darkness}
+\strip{echo-pride-and-prejudice.pdf}{Pride}
+\zcap{Every recurring word is one arch, spanning the longest time the book
+forgets it. In \emph{The Yellow Wallpaper} the longest are \emph{yellow} and
+\emph{moonlight}.}
+}
+
+% ------------------------------------------------------------------ 18
+\zpage{16}{Tides of speech}{%
+\strip{tide-the-trial.pdf}{Trial}
+\strip{tide-bartleby.pdf}{Bartleby}
+\strip{tide-yellow-wallpaper.pdf}{Wallpaper}
+\strip{tide-heart-of-darkness.pdf}{Darkness}
+\strip{tide-pride-and-prejudice.pdf}{Pride}
+\zcap{The share of words spoken inside quotation marks. \emph{Heart of
+Darkness} is a flood, \lab{c-heart-of-darkness-speech}\,\%: the whole tale is
+Marlow talking. \emph{The Yellow Wallpaper}, a secret journal, is nearly dry.}
+}
+
+% ------------------------------------------------------------------ 19
+\zpage{17}{Breath}{%
+\strip{breath-the-trial.pdf}{Trial}
+\strip{breath-bartleby.pdf}{Bartleby}
+\strip{breath-yellow-wallpaper.pdf}{Wallpaper}
+\strip{breath-heart-of-darkness.pdf}{Darkness}
+\strip{breath-pride-and-prejudice.pdf}{Pride}
+\zcap{Every clause, from one comma to the next, as tall as it is long.
+\emph{The Trial} holds its breath longest: \lab{c-the-trial-longbreath}\,\% of its
+clauses run to twenty words or more.}
+}
+
+% ------------------------------------------------------------------ 20
+\zpage{18}{The punctuation sky}{%
+\newcommand\skyrow[2]{\noindent\mono{#2}\par\vspace{0.8mm}\includegraphics[width=\textwidth]{\cdir #1}\par\vspace{2.2mm}}
+\skyrow{sky-the-trial.pdf}{Trial}
+\skyrow{sky-bartleby.pdf}{Bartleby}
+\skyrow{sky-yellow-wallpaper.pdf}{Wallpaper}
+\skyrow{sky-heart-of-darkness.pdf}{Darkness}
+\zcap{One star per sentence: a dot for a full stop, a ring for a question, a bar
+for an exclamation. \emph{The Yellow Wallpaper} cries out in
+\lab{c-yellow-wallpaper-exclaim}\,\% of its sentences. Ten times \emph{The Trial}.}
+}
+
+% ------------------------------------------------------------------ 21
+\zpage{19}{The pronoun walk}{%
+\vfill
+\five{pronouns}{21.5mm}
+\vfill
+\zcap{Walk again, steered by person: \emph{I} north, \emph{you} south,
+\emph{he} east, \emph{she} west. \emph{The Trial} walks due east: it is told
+about K., never by him. \emph{The Yellow Wallpaper} walks due north. Only
+\emph{Pride and Prejudice} turns west.}
+}
+
+% ------------------------------------------------------------------ 22
+\zpage{20}{The clock}{%
+\vfill
+\five{clock}{21.5mm}
+\vfill
+\zcap{Every time of day a book mentions, on a 24-hour dial, midnight at the top;
+further out, later in the book. \emph{Bartleby} keeps office hours, around
+\lab{c-bartleby-hour}. \emph{The Yellow Wallpaper} lives at night, around
+\lab{c-yellow-wallpaper-hour}.}
+}
+
+% ------------------------------------------------------------------ 23
+\zpage{21}{The light meter}{%
+\noindent\mono{Trial}\par\vspace{1.2mm}\includegraphics[width=\textwidth]{\cdir light-the-trial.png}\par\vspace{3mm}
+\noindent\mono{Bartleby}\par\vspace{1.2mm}\includegraphics[width=\textwidth]{\cdir light-bartleby.png}\par\vspace{3mm}
+\noindent\mono{Wallpaper}\par\vspace{1.2mm}\includegraphics[width=\textwidth]{\cdir light-yellow-wallpaper.png}\par\vspace{3mm}
+\noindent\mono{Darkness}\par\vspace{1.2mm}\includegraphics[width=\textwidth]{\cdir light-heart-of-darkness.png}\par\vspace{3mm}
+\noindent\mono{Pride}\par\vspace{1.2mm}\includegraphics[width=\textwidth]{\cdir light-pride-and-prejudice.png}\par
+\zcap{Light words (\emph{sun, lamp, candle, white}) against dark ones
+(\emph{shadow, fog, night, black}), read along each book. \emph{Heart of Darkness}
+is the most marked. \emph{The Trial} is lighter than its name: candles carried
+through dim rooms. Austen hardly mentions light at all.}
+}
+
+% ------------------------------------------------------------------ 24
+\zpage{22}{Other ways to walk}{%
+\vfill
+\begin{center}
+\includegraphics[width=52mm]{../build/the-trial/variants/graded-plan.pdf}\hspace{6mm}%
+\includegraphics[width=52mm]{../build/the-trial/variants/rolling-plan.pdf}\\[1mm]
+\makebox[52mm]{\mono{graded}}\hspace{6mm}\makebox[52mm]{\mono{rolling}}
+\end{center}
+\vfill
+\zcap{\emph{The Trial} again. Graded: each sentence turns as far as it feels,
+and the maze becomes a coastline. Rolling: the walker turns at every word, by
+the mood of the last twelve, and the corners melt into curves.}
+}
+
+% ------------------------------------------------------------------ 25
+\zpage{23}{Five portraits}{%
+\textsc{The Trial} walks evenly, in quiet moods that linger, with the plainest
+words, around one man who is never absent. Its tangles sit in the rooms where he
+looks for answers.
+
+\textsc{Bartleby} is short and cool, and asks the most questions. It keeps office
+hours.
+
+\textsc{The Yellow Wallpaper} is the smallest walk: few names, almost no other
+voices, written at night, and exclaiming.
+
+\textsc{Heart of Darkness} is one long spoken voice, leaning cold, rich in words,
+built around a man who is mostly not there.
+
+\textsc{Pride and Prejudice} is the largest walk and the warmest: half spoken,
+densely woven around Elizabeth, and the only one that walks west.
+}
+
+% ------------------------------------------------------------------ 26
+\zpage{24}{How this was made}{%
+\fontsize{8.6}{11.4}\selectfont
+Texts from Project Gutenberg. Sentences split at full stops, question and
+exclamation marks, never after an initial (\emph{Josef K.}).
+Feeling: the AFINN-165 word list (F.\,Å. Nielsen, 2011), summed per sentence.
+Capitalised words in mid-sentence are treated as names and not scored.
+
+Every claim about order is tested against two hundred shuffles of the same
+sentences, and only called a property of a book when it stands clearly apart
+from all of them. Every test is also repeated without the ambiguous word
+\emph{like}.
+
+A word list does not hear irony, does not notice \emph{not}, and for a translated
+novel it reads the translator. The drawings show the surface of the words, in
+the order the author chose. That is all they claim.
+
+Rarity of words: the system dictionary, ordered by the \texttt{wordfreq} corpus.
+Every number in this zine is computed by the program that draws it.
+}
+
+% ------------------------------------------------------------------ 27 colophon
+\kicker{25}{Colophon}
+\vfill
+{\monofont\fontsize{6}{9}\selectfont
+LABYRINTHOGRAPHY\\
+A ZINE\\[3mm]
+SET IN EB GARAMOND AND IBM PLEX MONO\\
+PRINTED IN BLACK ONLY\\
+A5, SADDLE-STITCHED\\[3mm]
+CODE: GITHUB.COM/SLOEV/TYPOGRAPHY\_MAZE\\[3mm]
+THE TRIAL QUOTED IN THE TRANSLATION BY DAVID WYLLIE,\\
+PROJECT GUTENBERG EBOOK 7849 (COPYRIGHTED; QUOTED AND\\
+DRAWN BY PERMISSION ONLY). OTHER TEXTS PUBLIC DOMAIN.\par}
+\folio\newpage
+
+% ------------------------------------------------------------------ 28 back cover
+\vspace*{\fill}
+\begin{center}\vocabdisc{\cdir vocab-the-trial.png}{46mm}\end{center}
+\vspace{6mm}
+\begin{center}\mono{Every dot is a word The Trial uses}\end{center}
+\vspace*{\fill}
+\noindent\mono{Labyrinthography}\hfill\mono{01}
+
+\end{document}

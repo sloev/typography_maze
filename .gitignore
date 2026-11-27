@@ -9,3 +9,8 @@ book/*.fdb_latexmk
 book/*.out
 book/*.toc
 build-*.log
+zine/*.aux
+zine/*.log
+zine/*.fls
+zine/*.fdb_latexmk
+zine/*.out

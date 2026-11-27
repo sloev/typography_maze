@@ -1,0 +1,9 @@
+% Print imposition: zine.pdf (28 A5 pages, reading order) -> 7 A4 sheets, all upright.
+% Print double-sided, FLIP ON SHORT EDGE; stack the sheets in order, fold, staple twice on the fold.
+% Order: sheet 1 front 28|1, back 2|27; sheet 2 front 26|3, back 4|25; ...
+\documentclass{article}
+\usepackage[a4paper,landscape]{geometry}
+\usepackage{pdfpages}
+\begin{document}
+\includepdf[pages={28,1,2,27,26,3,4,25,24,5,6,23,22,7,8,21,20,9,10,19,18,11,12,17,16,13,14,15}, nup=2x1, delta=0 0, frame=false]{zine.pdf}
+\end{document}
