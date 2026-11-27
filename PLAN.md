@@ -180,35 +180,40 @@ A second kind of image, used where the 2D drawing becomes too dense to read
 ![ground view prototype](prototypes/ground_view_trial.png)
 
 **Model**
-- **The text is the pathway.** Every sentence stroke is a corridor one word
-  long per unit of length. Its words are written on the floor one after
-  another, set across the corridor like road markings: upright as you walk
-  forward, and slightly stretched along the walking direction to offset
-  foreshortening.
-- **Tall walls line both sides of every pathway.** They are infinitely tall,
-  so there is no sky and no seeing over them.
-- Where pathways cross, the corridors merge: the walkable space is the union of
-  all corridors, and the walls are its boundary. A crossing appears as a side
-  opening, and its sentence runs across your floor at right angles (visible on
-  the left of the first frame of the prototype).
-- Where sentences overlap on the same line (palimpsest), their words share
-  the floor and print over each other.
+- **The text is the pathway.** Every sentence stroke is a corridor. The sentence
+  is written along it **as seen from above**: the baseline runs along the
+  right-hand wall, the tops of the letters point to the left-hand wall, and it
+  reads in the walking direction. Each sentence is justified to its stroke length
+  (1 unit = 1 word), so the lettering fills the corridor width.
+- **Tall walls line both sides of every pathway** (solid mass between pathways).
+  They are drawn infinitely tall: there is no sky and no seeing over them.
+- Where pathways cross, the corridors merge (the walkable space is the union of
+  all corridors). A crossing appears as a side opening, with the other sentence
+  running across your floor.
+- Where sentences overlap on the same line (palimpsest), their letters overprint.
 - **The camera is always inside a pathway**, at eye height, looking along it in
-  the reading direction. You read the sentence by walking forward.
-- Because the walls are infinitely tall, what's visible is purely 2D: a ray
-  hits the first wall in the floor plan. That makes rendering exact.
+  the reading direction.
 
-**Look (1-bit)**
-- **Font**: EB Garamond (SIL Open Font License), semibold for the floor so it
-  holds up in 1-bit. Words are set large: each word fills the width of its
-  pathway.
-- **Walls**: white, ruled with horizontal lines every 0.3 units of height, like
-  lined paper. They converge to the vanishing point and are dropped where they
-  would come too close together to print. Black verticals at corners and
-  openings, a black line where wall meets floor.
-- Text in the distance fades out by culling, not grey.
-- **Formats**: a single view (one page), a 4–6 frame walk along a sentence, and a
-  360° panorama at a junction across a spread.
+**Light: the sun through haze**
+- A sun with an azimuth and elevation. **Shadows are exact.** From every floor
+  and wall point the renderer traces towards the sun through the floor plan, so
+  walls throw sharp shadows onto the floor and onto each other. Typically one
+  wall is lit, the other in shade, and a lit band runs along the floor, cut by a
+  clean diagonal shadow line. Side openings let in light.
+- Infinitely tall walls would let no sunlight in at all. The light is
+  therefore calculated as if the walls end above the frame (a
+  `WALL` height, currently 1.2 units), while they are still drawn as endless.
+- **Haze**: distance fades towards a bright haze tone, and the sunlit air
+  scatters light towards the eye (forward scattering), so light shafts glow
+  at the end of a pathway and in openings.
+- **1-bit**: the image is computed in continuous tone and then
+  error-diffused (Floyd–Steinberg, serpentine) to pure black and white. The
+  dither grain is part of the look and reads as haze.
+- **Font**: EB Garamond (SIL Open Font License), semibold.
+
+**Formats**: a single view (one page), a 4–6 frame walk along a sentence (the
+sun fixed per book, so the light is consistent between frames), and a 360°
+panorama at a junction across a spread.
 
 **Where the camera goes** (automatic candidates, then picked by hand)
 - A few words before a sentence ends, so the turn ahead is visible (the
@@ -225,10 +230,12 @@ A second kind of image, used where the 2D drawing becomes too dense to read
 - **Vista**: how far you can see along the pathway before a wall.
 - **Openings**: side openings per 10 words, which shows how porous a passage is.
 
-**Final renderer**: vector. The floor maps to the image by a homography, so
-glyph outlines (fontTools) are transformed exactly and stay sharp close to
-the camera. Wall courses and edges are lines. The prototype
-`prototypes/view3d.py` is a raster ray-marcher, for checking the look only.
+**Renderer**: the prototype `prototypes/view3d.py` ray-marches the floor plan
+(walls), samples a high-resolution lettering texture (floor), traces exact
+shadows and integrates the haze, all accelerated with numba, in about 10 s per
+frame. For print it renders at ≥ 1200 dpi before dithering. The lettering
+texture near the camera needs more resolution (or the glyphs rendered as
+outlines through the floor homography) so close letters stay sharp.
 
 ---
 
